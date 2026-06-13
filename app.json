@@ -9,24 +9,50 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.jguevaral.satapp",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Permite que Papeleta Clara reconozca tu voz para convertirla en texto.",
+        "NSMicrophoneUsageDescription": "Permite que Papeleta Clara use el microfono para transcribir tu consulta."
+      }
     },
     "android": {
+      "package": "com.jguevaral.satapp",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Permite que Papeleta Clara use el microfono para transcribir tu consulta.",
+          "speechRecognitionPermission": "Permite que Papeleta Clara reconozca tu voz para convertirla en texto.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dfc16541-aa5a-4923-bc79-21cc01c74327"
+      }
+    },
+    "owner": "jguevaral"
   }
 }

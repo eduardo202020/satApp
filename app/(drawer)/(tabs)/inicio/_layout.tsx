@@ -7,6 +7,7 @@ export default function InicioStackLayout() {
     <Stack screenOptions={stackHeaderOptions}>
       <Stack.Screen name="index" options={{ title: 'Papeleta Clara' }} />
       <Stack.Screen name="consulta" options={{ title: 'Consulta' }} />
+      <Stack.Screen name="voz" options={{ title: 'Consulta por voz' }} />
       <Stack.Screen name="resultado" options={{ title: 'Resultado' }} />
       <Stack.Screen name="confirmacion" options={{ title: 'Confirmacion' }} />
     </Stack>

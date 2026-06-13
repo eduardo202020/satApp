@@ -150,6 +150,12 @@ export const consultationOptions = [
     href: '/(drawer)/(tabs)/inicio/consulta',
   },
   {
+    title: 'Hablar con Papeleta Clara',
+    description: 'Dicta tu consulta y la convertimos en texto.',
+    icon: 'microphone-outline' as IconName,
+    href: '/(drawer)/(tabs)/inicio/voz',
+  },
+  {
     title: 'Probar caso ficticio',
     description: 'Explora ejemplos para conocer tu ruta clara.',
     icon: 'flask-outline' as IconName,
