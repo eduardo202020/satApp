@@ -1,6 +1,7 @@
 import {
   DrawerContentScrollView,
   DrawerItemList,
+  type DrawerContentComponentProps,
 } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, View } from 'react-native';
@@ -8,7 +9,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AppLogo } from '../shared/components/AppLogo';
 import { colors } from '../shared/styles/theme';
 
-export function CustomDrawerContent(props) {
+export function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <View style={styles.drawer}>
       <DrawerContentScrollView

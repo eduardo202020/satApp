@@ -2,8 +2,19 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../../../shared/styles/theme';
+import type { IconName } from '../../../shared/types/ui';
 
-export function SummaryCard({ item }) {
+export type SummaryItem = {
+  label: string;
+  value: string;
+  icon: IconName;
+};
+
+type SummaryCardProps = {
+  item: SummaryItem;
+};
+
+export function SummaryCard({ item }: SummaryCardProps) {
   return (
     <View style={styles.summaryCard}>
       <View style={styles.summaryIcon}>

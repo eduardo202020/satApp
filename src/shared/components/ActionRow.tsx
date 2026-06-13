@@ -2,8 +2,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from '../styles/theme';
+import type { ActionItem } from '../types/ui';
 
-export function ActionRow({ item }) {
+type ActionRowProps = {
+  item: ActionItem;
+};
+
+export function ActionRow({ item }: ActionRowProps) {
   return (
     <Pressable style={styles.actionRow}>
       <View style={[styles.actionMarker, { backgroundColor: item.color }]} />

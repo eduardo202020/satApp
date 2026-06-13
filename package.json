@@ -28,7 +28,12 @@
     "android:tunnel": "expo start --android --tunnel",
     "android:localhost": "expo start --android --localhost",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  }
 }

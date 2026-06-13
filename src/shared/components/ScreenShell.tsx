@@ -1,9 +1,17 @@
+import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '../styles/theme';
 
-export function ScreenShell({ eyebrow, title, description, children }) {
+type ScreenShellProps = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  children: ReactNode;
+};
+
+export function ScreenShell({ eyebrow, title, description, children }: ScreenShellProps) {
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView

@@ -1,6 +1,13 @@
 import { colors } from '../../../shared/styles/theme';
+import type { SummaryItem } from '../components/SummaryCard';
+import type { ActionItem } from '../../../shared/types/ui';
 
-export function useDashboardData() {
+type DashboardData = {
+  summaryCards: SummaryItem[];
+  tasks: ActionItem[];
+};
+
+export function useDashboardData(): DashboardData {
   return {
     summaryCards: [
       { label: 'Pendientes', value: '04', icon: 'clipboard-text-clock-outline' },

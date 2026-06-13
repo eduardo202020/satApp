@@ -1,4 +1,11 @@
-export function useCalendarItems() {
+export type CalendarItem = {
+  day: string;
+  month: string;
+  title: string;
+  time: string;
+};
+
+export function useCalendarItems(): CalendarItem[] {
   return [
     { day: '14', month: 'JUN', title: 'Entrega de soporte', time: '9:00 AM' },
     { day: '18', month: 'JUN', title: 'Revision interna', time: '2:30 PM' },

@@ -1,5 +1,13 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import type { IconName } from '../shared/types/ui';
+
+type DrawerRoute = {
+  name: string;
+  title: string;
+  icon: IconName;
+};
+
 export const drawerRoutes = [
   {
     name: 'inicio/index',
@@ -21,10 +29,15 @@ export const drawerRoutes = [
     title: 'Perfil',
     icon: 'account-circle-outline',
   },
-];
+] satisfies DrawerRoute[];
 
-export function drawerIcon(name) {
-  return ({ color, size }) => (
+type DrawerIconProps = {
+  color: string;
+  size: number;
+};
+
+export function drawerIcon(name: IconName) {
+  return ({ color, size }: DrawerIconProps) => (
     <MaterialCommunityIcons name={name} size={size} color={color} />
   );
 }

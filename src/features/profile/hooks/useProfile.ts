@@ -1,6 +1,14 @@
 import { colors } from '../../../shared/styles/theme';
+import type { ActionItem } from '../../../shared/types/ui';
 
-export function useProfile() {
+type Profile = {
+  initials: string;
+  name: string;
+  role: string;
+  details: ActionItem[];
+};
+
+export function useProfile(): Profile {
   return {
     initials: 'EG',
     name: 'Eduardo Guevara',
