@@ -11,15 +11,12 @@ export type ActionItem = {
 
 export type RiskLevel = 'Bajo' | 'Medio' | 'Alto';
 
-export type CaseStatus =
-  | 'En plazo inicial'
-  | 'Sancion firme'
-  | 'Apelacion presentada'
-  | 'Procedimiento iniciado'
-  | 'Riesgo coactivo';
+export type CaseStatus = string;
 
 export type CaseRecord = {
   id: string;
+  ticketCode?: string;
+  ticketNumber?: string;
   infraction: string;
   plate: string;
   amount: string;
@@ -31,6 +28,7 @@ export type CaseRecord = {
   canDiscount: boolean;
   stage: string;
   nextStep: string;
+  summary?: string;
 };
 
 export type TimelineStep = {
@@ -61,4 +59,12 @@ export type CaseAlert = {
   description: string;
   time: string;
   tone: AlertTone;
+};
+
+export type OfficialChannel = {
+  id: string;
+  name: string;
+  citizen_need: string;
+  url: string | null;
+  description: string;
 };

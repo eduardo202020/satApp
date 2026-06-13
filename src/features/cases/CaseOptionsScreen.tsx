@@ -13,14 +13,14 @@ import { useCaseJourney } from './hooks/useCaseJourney';
 export default function CaseOptionsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getCaseById } = useCases();
-  const { recommendedOptions } = useCaseJourney();
   const item = getCaseById(id);
+  const { recommendedOptions } = useCaseJourney(item.id);
 
   return (
     <ScreenShell
       eyebrow="Opciones"
       title="Que puedes hacer ahora?"
-      description={`Segun el estado de ${item.id}, estas son las acciones recomendadas.`}
+      description={`Segun el estado de ${item.ticketCode ?? item.id}, estas son las acciones recomendadas.`}
       compact
     >
       <View style={styles.list}>

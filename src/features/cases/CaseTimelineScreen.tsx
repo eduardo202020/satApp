@@ -10,13 +10,13 @@ import { useCaseJourney } from './hooks/useCaseJourney';
 export default function CaseTimelineScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getCaseById } = useCases();
-  const { timelineSteps } = useCaseJourney();
   const item = getCaseById(id);
+  const { timelineSteps } = useCaseJourney(item.id);
 
   return (
     <ScreenShell
       eyebrow="Linea de tiempo"
-      title={`Ruta de ${item.id}`}
+      title={`Ruta de ${item.ticketCode ?? item.id}`}
       description="Cada etapa te muestra donde estas y que podria pasar despues."
       compact
     >

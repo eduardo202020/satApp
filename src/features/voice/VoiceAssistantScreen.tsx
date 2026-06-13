@@ -6,9 +6,11 @@ import { ScreenShell } from '../../shared/components/ScreenShell';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import { useVoiceTranscription } from './hooks/useVoiceTranscription';
+import { useCases } from '../cases/hooks/useCases';
 
 export default function VoiceAssistantScreen() {
   const voice = useVoiceTranscription();
+  const { cases } = useCases();
   const [isPaused, setIsPaused] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [pendingSend, setPendingSend] = useState(false);
@@ -62,6 +64,12 @@ export default function VoiceAssistantScreen() {
     }
 
     setPendingSend(true);
+  }
+
+  function processVoiceCase() {
+    const detectedCode = voice.intents.find((intent) => intent.label === 'Papeleta detectada')?.value;
+    const matchedCase = cases.find((item) => item.ticketCode === detectedCode || item.id === detectedCode);
+    navigateTo(`/caso/${matchedCase?.id ?? cases[0].id}`);
   }
 
   return (
@@ -157,7 +165,7 @@ export default function VoiceAssistantScreen() {
       <View style={styles.actions}>
         <Pressable
           disabled={!visibleTranscript}
-          onPress={() => navigateTo('/caso/G11')}
+          onPress={processVoiceCase}
           style={[styles.secondaryButton, !visibleTranscript && styles.disabledOutline]}
         >
           <MaterialCommunityIcons name="arrow-right-circle-outline" size={20} color={colors.blue} />

@@ -36,7 +36,7 @@ export default function ConsultationScreen() {
 
       <View style={styles.actions}>
         <PrimaryButton label="Buscar papeleta ficticia" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/resultado')} />
-        <PrimaryButton label="Usar caso ficticio" variant="secondary" onPress={() => navigateTo('/caso/G11')} />
+        <PrimaryButton label="Usar caso ficticio" variant="secondary" onPress={() => navigateTo('/caso/demo-g11-descuento')} />
       </View>
     </ScreenShell>
   );

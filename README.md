@@ -104,6 +104,12 @@ WhatSAT abre el canal de WhatsApp del SAT para consultas oficiales.
 
 El proyecto incluye documentación en `rag.md` para conectar una base de conocimiento SAT/RAG ya procesada.
 
+La primera integración local con FastAPI ya está disponible. La app puede cargar casos,
+líneas de tiempo, opciones, checklist y canales desde el proyecto hermano `sat-rag`,
+con respaldo en los datos ficticios locales cuando la API está fuera de línea.
+
+Consulta el flujo y las instrucciones conjuntas en `docs/flujo-end-to-end.md`.
+
 La arquitectura propuesta separa dos tipos de información:
 
 ### Datos Determinísticos

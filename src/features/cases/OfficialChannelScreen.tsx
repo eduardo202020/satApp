@@ -1,17 +1,22 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import { useCases } from './hooks/useCases';
+import { useCaseJourney } from './hooks/useCaseJourney';
 
 export default function OfficialChannelScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getCaseById } = useCases();
   const item = getCaseById(id);
+  const { officialChannel } = useCaseJourney(item.id);
+  const channelName = officialChannel?.name ?? 'Mesa de Partes Digital';
+  const channelDescription =
+    officialChannel?.description ?? 'Presenta tu descargo o solicitud con los documentos preparados.';
 
   return (
     <ScreenShell
@@ -23,8 +28,8 @@ export default function OfficialChannelScreen() {
       <View style={styles.card}>
         <MaterialCommunityIcons name="office-building-outline" size={34} color={colors.blue} />
         <View style={styles.copy}>
-          <Text style={styles.title}>Mesa de Partes Digital</Text>
-          <Text style={styles.description}>Presenta tu descargo o solicitud con los documentos preparados.</Text>
+          <Text style={styles.title}>{channelName}</Text>
+          <Text style={styles.description}>{channelDescription}</Text>
         </View>
       </View>
 
@@ -38,7 +43,16 @@ export default function OfficialChannelScreen() {
       </View>
 
       <View style={styles.actions}>
-        <PrimaryButton label="Confirmar accion" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/confirmacion')} />
+        <PrimaryButton
+          label={officialChannel?.url ? 'Abrir canal oficial' : 'Confirmar accion'}
+          onPress={() => {
+            if (officialChannel?.url) {
+              Linking.openURL(officialChannel.url);
+              return;
+            }
+            navigateTo('/(drawer)/(tabs)/inicio/confirmacion');
+          }}
+        />
         <PrimaryButton label="Volver a mi ruta" variant="secondary" onPress={() => navigateTo(`/caso/${item.id}`)} />
       </View>
     </ScreenShell>

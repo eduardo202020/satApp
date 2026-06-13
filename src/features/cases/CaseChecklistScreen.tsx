@@ -12,8 +12,8 @@ import { useCaseJourney } from './hooks/useCaseJourney';
 export default function CaseChecklistScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getCaseById } = useCases();
-  const { checklist } = useCaseJourney();
   const item = getCaseById(id);
+  const { checklist } = useCaseJourney(item.id);
 
   return (
     <ScreenShell

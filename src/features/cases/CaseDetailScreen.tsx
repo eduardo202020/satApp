@@ -17,13 +17,13 @@ export default function CaseDetailScreen() {
   return (
     <ScreenShell
       eyebrow="Detalle del caso"
-      title={`Papeleta ${item.id}`}
+      title={`Papeleta ${item.ticketCode ?? item.id}`}
       description="Informacion ordenada para entender en que etapa estas y que puedes hacer."
       compact
     >
       <View style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.code}>{item.id}</Text>
+          <Text style={styles.code}>{item.ticketCode ?? item.id}</Text>
           <StatusPill label={item.status} tone={riskTone} />
         </View>
         <Detail label="Infraccion" value={item.infraction} />

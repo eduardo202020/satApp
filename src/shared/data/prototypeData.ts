@@ -165,13 +165,13 @@ export const consultationOptions = [
     title: 'Entender una papeleta',
     description: 'Explicamos los conceptos principales.',
     icon: 'text-box-search-outline' as IconName,
-    href: '/caso/G11',
+    href: '/caso/demo-g11-descuento',
   },
   {
     title: 'Ver si tengo descuento',
     description: 'Revisa plazos y beneficios disponibles.',
     icon: 'clock-check-outline' as IconName,
-    href: '/caso/G11/opciones',
+    href: '/caso/demo-g11-descuento/opciones',
   },
   {
     title: 'Revisar riesgo de captura o retencion',

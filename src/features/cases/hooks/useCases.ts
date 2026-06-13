@@ -1,6 +1,29 @@
-import { cases } from '../../../shared/data/prototypeData';
+import { useEffect, useState } from 'react';
+
+import { fetchKnowledgeCases } from '../../../shared/api/satApi';
+import { cases as prototypeCases } from '../../../shared/data/prototypeData';
 
 export function useCases() {
+  const [cases, setCases] = useState(prototypeCases);
+
+  useEffect(() => {
+    let active = true;
+
+    fetchKnowledgeCases()
+      .then((items) => {
+        if (active && items.length > 0) {
+          setCases(items);
+        }
+      })
+      .catch(() => {
+        // The local prototype remains available when FastAPI is offline.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return {
     cases,
     getCaseById: (id?: string | string[]) =>

@@ -20,7 +20,7 @@ export function CaseCard({ item, compact = false }: CaseCardProps) {
       onPress={() => navigateTo(`/caso/${item.id}`)}
     >
       <View style={styles.header}>
-        <Text style={styles.code}>{item.id}</Text>
+        <Text style={styles.code}>{item.ticketCode ?? item.id}</Text>
         <StatusPill label={item.status} tone={riskTone} />
       </View>
 

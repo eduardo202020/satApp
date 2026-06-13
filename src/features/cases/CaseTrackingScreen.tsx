@@ -15,7 +15,7 @@ export default function CaseTrackingScreen() {
   return (
     <ScreenShell
       eyebrow="Seguimiento"
-      title={`Caso ${item.id}`}
+      title={`Caso ${item.ticketCode ?? item.id}`}
       description="Vista de continuidad para revisar estado actual, ultima actualizacion y proximo paso."
     >
       <View style={styles.card}>
