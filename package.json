@@ -8,6 +8,7 @@
     "@react-navigation/native": "^7.1.8",
     "expo": "~54.0.34",
     "expo-constants": "~18.0.13",
+    "expo-dev-client": "~6.0.21",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.12",
     "expo-router": "~6.0.24",
@@ -24,6 +25,8 @@
   },
   "scripts": {
     "start": "expo start",
+    "start:dev": "expo start --dev-client",
+    "start:dev:tunnel": "expo start --dev-client --tunnel",
     "start:tunnel": "expo start --tunnel",
     "start:localhost": "expo start --localhost",
     "android": "expo start --android",

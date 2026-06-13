@@ -47,8 +47,10 @@ function parseVoiceIntent(text: string): VoiceIntent[] {
 }
 
 export function useVoiceTranscription() {
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isAvailable, setIsAvailable] = useState(true);
   const [isListening, setIsListening] = useState(false);
+  const [volumeLevel, setVolumeLevel] = useState(0);
   const [transcript, setTranscript] = useState('');
   const [finalTranscript, setFinalTranscript] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -58,13 +60,40 @@ export function useVoiceTranscription() {
     setIsAvailable(getRecognitionAvailable());
   }, []);
 
+  useEffect(() => {
+    if (!isListening) {
+      return undefined;
+    }
+
+    const timer = setInterval(() => {
+      setElapsedSeconds((seconds) => seconds + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isListening]);
+
   useSpeechRecognitionEvent('start', () => {
     setErrorMessage(null);
     setIsListening(true);
+    setVolumeLevel(0);
   });
 
   useSpeechRecognitionEvent('end', () => {
     setIsListening(false);
+    setVolumeLevel(0);
+  });
+
+  useSpeechRecognitionEvent('soundstart', () => {
+    setVolumeLevel((level) => Math.max(level, 0.24));
+  });
+
+  useSpeechRecognitionEvent('soundend', () => {
+    setVolumeLevel(0);
+  });
+
+  useSpeechRecognitionEvent('volumechange', (event) => {
+    const normalized = Math.max(0, Math.min(1, event.value / 10));
+    setVolumeLevel((level) => level * 0.35 + normalized * 0.65);
   });
 
   useSpeechRecognitionEvent('result', (event) => {
@@ -87,10 +116,11 @@ export function useVoiceTranscription() {
 
   useSpeechRecognitionEvent('error', (event) => {
     setIsListening(false);
+    setVolumeLevel(0);
     setErrorMessage(event.message || `Error de reconocimiento: ${event.error}`);
   });
 
-  async function startListening() {
+  async function startListening({ reset = true } = {}) {
     const available = getRecognitionAvailable();
     setIsAvailable(available);
 
@@ -106,8 +136,12 @@ export function useVoiceTranscription() {
       return;
     }
 
-    setTranscript('');
-    setFinalTranscript('');
+    if (reset) {
+      setElapsedSeconds(0);
+      setTranscript('');
+      setFinalTranscript('');
+    }
+
     setErrorMessage(null);
 
     ExpoSpeechRecognitionModule.start({
@@ -115,6 +149,10 @@ export function useVoiceTranscription() {
       interimResults: true,
       continuous: false,
       maxAlternatives: 1,
+      volumeChangeEventOptions: {
+        enabled: true,
+        intervalMillis: 80,
+      },
     });
   }
 
@@ -122,13 +160,27 @@ export function useVoiceTranscription() {
     ExpoSpeechRecognitionModule.stop();
   }
 
+  function cancelListening() {
+    ExpoSpeechRecognitionModule.abort();
+    setElapsedSeconds(0);
+    setIsListening(false);
+    setVolumeLevel(0);
+    setTranscript('');
+    setFinalTranscript('');
+    setErrorMessage(null);
+  }
+
   function resetTranscript() {
+    setElapsedSeconds(0);
+    setVolumeLevel(0);
     setTranscript('');
     setFinalTranscript('');
     setErrorMessage(null);
   }
 
   return {
+    cancelListening,
+    elapsedSeconds,
     errorMessage,
     finalTranscript,
     intents,
@@ -138,5 +190,6 @@ export function useVoiceTranscription() {
     startListening,
     stopListening,
     transcript,
+    volumeLevel,
   };
 }
