@@ -9,10 +9,10 @@ export default function DrawerLayout() {
   return (
     <Drawer
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      initialRouteName="inicio/index"
+      initialRouteName="(tabs)"
       screenOptions={{
-        drawerActiveBackgroundColor: colors.greenLight,
-        drawerActiveTintColor: colors.green,
+        drawerActiveBackgroundColor: colors.blueLight,
+        drawerActiveTintColor: colors.navy,
         drawerInactiveTintColor: colors.muted,
         drawerLabelStyle: drawerStyles.drawerLabel,
         drawerStyle: drawerStyles.drawerPanel,
@@ -31,6 +31,7 @@ export default function DrawerLayout() {
           options={{
             drawerIcon: drawerIcon(route.icon),
             drawerLabel: route.title,
+            headerShown: route.name !== '(tabs)',
             title: route.title,
           }}
         />

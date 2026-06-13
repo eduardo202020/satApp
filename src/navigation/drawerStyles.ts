@@ -7,7 +7,7 @@ export const drawerStyles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: colors.green,
+    backgroundColor: colors.navy,
   },
   headerTitle: {
     color: colors.cream,
@@ -16,7 +16,7 @@ export const drawerStyles = StyleSheet.create({
   },
   drawerPanel: {
     backgroundColor: colors.card,
-    width: 304,
+    width: 312,
   },
   drawerLabel: {
     fontSize: 15,

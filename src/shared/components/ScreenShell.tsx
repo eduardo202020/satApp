@@ -9,14 +9,21 @@ type ScreenShellProps = {
   title: string;
   description: string;
   children: ReactNode;
+  compact?: boolean;
 };
 
-export function ScreenShell({ eyebrow, title, description, children }: ScreenShellProps) {
+export function ScreenShell({
+  eyebrow,
+  title,
+  description,
+  children,
+  compact = false,
+}: ScreenShellProps) {
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView
         style={styles.screen}
-        contentContainerStyle={styles.screenContent}
+        contentContainerStyle={[styles.screenContent, compact && styles.compactContent]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
@@ -42,6 +49,9 @@ const styles = StyleSheet.create({
   },
   screenContent: {
     padding: 20,
+    paddingBottom: 104,
+  },
+  compactContent: {
     paddingBottom: 34,
   },
   hero: {
@@ -52,7 +62,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   eyebrow: {
-    color: colors.clay,
+    color: colors.blue,
     fontSize: 12,
     fontWeight: '900',
     letterSpacing: 0,
@@ -60,9 +70,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.ink,
-    fontSize: 31,
+    fontSize: 28,
     fontWeight: '900',
-    lineHeight: 36,
+    lineHeight: 33,
     marginTop: 8,
   },
   description: {

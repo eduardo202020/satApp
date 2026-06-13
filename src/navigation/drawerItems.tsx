@@ -10,24 +10,39 @@ type DrawerRoute = {
 
 export const drawerRoutes = [
   {
-    name: 'inicio/index',
-    title: 'Inicio',
-    icon: 'view-dashboard-outline',
+    name: '(tabs)',
+    title: 'Papeleta Clara',
+    icon: 'check-decagram-outline',
   },
   {
-    name: 'tramites/index',
-    title: 'Tramites',
-    icon: 'file-document-edit-outline',
+    name: 'ayuda',
+    title: 'Ayuda',
+    icon: 'help-circle-outline',
   },
   {
-    name: 'calendario/index',
-    title: 'Calendario',
-    icon: 'calendar-month-outline',
+    name: 'canales-sat',
+    title: 'Canales oficiales SAT',
+    icon: 'office-building-outline',
   },
   {
-    name: 'perfil/index',
-    title: 'Perfil',
-    icon: 'account-circle-outline',
+    name: 'fuentes',
+    title: 'Fuentes oficiales',
+    icon: 'file-search-outline',
+  },
+  {
+    name: 'datos-abiertos',
+    title: 'Datos abiertos',
+    icon: 'chart-box-outline',
+  },
+  {
+    name: 'privacidad',
+    title: 'Privacidad',
+    icon: 'shield-lock-outline',
+  },
+  {
+    name: 'acerca',
+    title: 'Acerca del prototipo',
+    icon: 'information-outline',
   },
 ] satisfies DrawerRoute[];
 

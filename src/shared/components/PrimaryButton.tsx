@@ -1,0 +1,44 @@
+import { Pressable, StyleSheet, Text } from 'react-native';
+
+import { colors } from '../styles/theme';
+
+type PrimaryButtonProps = {
+  label: string;
+  onPress?: () => void;
+  variant?: 'primary' | 'secondary';
+};
+
+export function PrimaryButton({ label, onPress, variant = 'primary' }: PrimaryButtonProps) {
+  const isSecondary = variant === 'secondary';
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[styles.button, isSecondary && styles.secondaryButton]}
+    >
+      <Text style={[styles.label, isSecondary && styles.secondaryLabel]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 8,
+    minHeight: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+  },
+  secondaryButton: {
+    backgroundColor: colors.blueLight,
+  },
+  label: {
+    color: colors.cream,
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  secondaryLabel: {
+    color: colors.navy,
+  },
+});

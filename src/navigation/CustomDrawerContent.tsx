@@ -17,14 +17,14 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
         contentContainerStyle={styles.drawerScroll}
       >
         <LinearGradient
-          colors={[colors.green, '#274F40']}
+          colors={[colors.navy, colors.navyDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.drawerHero}
         >
           <AppLogo />
-          <Text style={styles.drawerTitle}>satApp</Text>
-          <Text style={styles.drawerSubtitle}>Gestion centralizada</Text>
+          <Text style={styles.drawerTitle}>Papeleta Clara</Text>
+          <Text style={styles.drawerSubtitle}>Ruta clara. Papeleta clara.</Text>
         </LinearGradient>
 
         <View style={styles.drawerItems}>
@@ -35,8 +35,8 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
       <View style={styles.drawerFooter}>
         <View style={styles.statusDot} />
         <View>
-          <Text style={styles.footerTitle}>Conexion activa</Text>
-          <Text style={styles.footerText}>Expo Go + WSL2</Text>
+          <Text style={styles.footerTitle}>Modo demo activo</Text>
+          <Text style={styles.footerText}>Datos ficticios del prototipo</Text>
         </View>
       </View>
     </View>
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   drawerTitle: {
     color: colors.cream,
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: '900',
     marginTop: 18,
   },
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   statusDot: {
-    backgroundColor: colors.green,
+    backgroundColor: colors.blue,
     borderRadius: 7,
     height: 14,
     width: 14,
