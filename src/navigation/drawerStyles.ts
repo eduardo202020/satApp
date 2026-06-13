@@ -16,11 +16,14 @@ export const drawerStyles = StyleSheet.create({
   },
   drawerPanel: {
     backgroundColor: colors.card,
-    width: 312,
+    borderBottomRightRadius: 28,
+    borderTopRightRadius: 28,
+    overflow: 'hidden',
+    width: 292,
   },
   drawerLabel: {
-    fontSize: 15,
-    fontWeight: '800',
-    marginLeft: -8,
+    fontSize: 14,
+    fontWeight: '900',
+    marginLeft: -4,
   },
 });

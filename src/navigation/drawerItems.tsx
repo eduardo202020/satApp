@@ -2,10 +2,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import type { IconName } from '../shared/types/ui';
 
-type DrawerRoute = {
+export type DrawerRoute = {
   name: string;
   title: string;
   icon: IconName;
+  externalUrl?: string;
 };
 
 export const drawerRoutes = [
@@ -15,9 +16,9 @@ export const drawerRoutes = [
     icon: 'check-decagram-outline',
   },
   {
-    name: 'ayuda',
-    title: 'Ayuda',
-    icon: 'help-circle-outline',
+    name: 'perfil',
+    title: 'Perfil',
+    icon: 'account-circle-outline',
   },
   {
     name: 'canales-sat',
@@ -25,24 +26,11 @@ export const drawerRoutes = [
     icon: 'office-building-outline',
   },
   {
-    name: 'fuentes',
-    title: 'Fuentes oficiales',
-    icon: 'file-search-outline',
-  },
-  {
-    name: 'datos-abiertos',
-    title: 'Datos abiertos',
-    icon: 'chart-box-outline',
-  },
-  {
-    name: 'privacidad',
-    title: 'Privacidad',
-    icon: 'shield-lock-outline',
-  },
-  {
-    name: 'acerca',
-    title: 'Acerca del prototipo',
-    icon: 'information-outline',
+    name: 'whatsat',
+    title: 'WhatSAT',
+    icon: 'whatsapp',
+    externalUrl:
+      'https://wa.me/51999431111?text=Hola%20SAT%2C%20necesito%20hacer%20una%20consulta%20sobre%20una%20papeleta.',
   },
 ] satisfies DrawerRoute[];
 

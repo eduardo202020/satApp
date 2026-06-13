@@ -24,14 +24,14 @@ export default function DrawerLayout() {
         sceneStyle: drawerStyles.scene,
       }}
     >
-      {drawerRoutes.map((route) => (
+      {drawerRoutes.filter((route) => !route.externalUrl).map((route) => (
         <Drawer.Screen
           key={route.name}
           name={route.name}
           options={{
             drawerIcon: drawerIcon(route.icon),
             drawerLabel: route.title,
-            headerShown: route.name !== '(tabs)',
+            headerShown: route.name !== '(tabs)' && route.name !== 'perfil',
             title: route.title,
           }}
         />

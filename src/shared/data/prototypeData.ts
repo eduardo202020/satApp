@@ -159,7 +159,7 @@ export const consultationOptions = [
     title: 'Entender una papeleta',
     description: 'Explicamos los conceptos principales.',
     icon: 'text-box-search-outline' as IconName,
-    href: '/(drawer)/fuentes',
+    href: '/caso/G11',
   },
   {
     title: 'Ver si tengo descuento',

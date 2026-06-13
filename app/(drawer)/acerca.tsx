@@ -1,6 +1,0 @@
-import InfoScreen from '../../src/features/info/InfoScreen';
-import { infoPages } from '../../src/features/info/infoContent';
-
-export default function AboutRoute() {
-  return <InfoScreen page={infoPages.acerca} />;
-}
