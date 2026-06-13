@@ -29,6 +29,32 @@ export type CaseRecord = {
   stage: string;
   nextStep: string;
   summary?: string;
+  evidence?: EvidenceItem[];
+  latestSubmission?: SubmissionRecord | null;
+};
+
+export type EvidenceItem = {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  capturedAt: string;
+  location: string;
+  isMock: boolean;
+};
+
+export type SubmissionRecord = {
+  id: string;
+  receiptNumber: string;
+  caseId: string;
+  action: string;
+  status: string;
+  summary: string;
+  userStatement: string;
+  checklist: string[];
+  attachments: string[];
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TimelineStep = {
@@ -43,6 +69,7 @@ export type CaseOption = {
   description: string;
   tone: 'safe' | 'info' | 'attention';
   icon: IconName;
+  action?: string;
 };
 
 export type ChecklistItem = {
@@ -59,6 +86,24 @@ export type CaseAlert = {
   description: string;
   time: string;
   tone: AlertTone;
+  kind?: string;
+};
+
+export type CaseTracking = {
+  case: CaseRecord;
+  submissions: SubmissionRecord[];
+  alerts: CaseAlert[];
+};
+
+export type ClearDiagnosis = {
+  currentStatus: string;
+  plainExplanation: string;
+  deadlines: string[];
+  risks: string[];
+  userNarrativeSummary: string;
+  availableActions: string[];
+  sources: string[];
+  disclaimer: string;
 };
 
 export type OfficialChannel = {

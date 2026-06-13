@@ -35,7 +35,10 @@ export default function CaseOptionsScreen() {
         ))}
       </View>
       <View style={styles.actions}>
-        <PrimaryButton label="Preparar checklist" onPress={() => navigateTo(`/caso/${item.id}/checklist`)} />
+        {recommendedOptions.some((option) => option.action === 'presentar_descargo') && (
+          <PrimaryButton label="Preparar descargo demo" onPress={() => navigateTo(`/caso/${id}/tramite`)} />
+        )}
+        <PrimaryButton label="Preparar checklist" variant="secondary" onPress={() => navigateTo(`/caso/${id}/checklist`)} />
       </View>
     </ScreenShell>
   );
@@ -69,6 +72,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   actions: {
+    gap: 10,
     marginTop: 16,
   },
 });

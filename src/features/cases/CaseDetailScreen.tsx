@@ -35,8 +35,10 @@ export default function CaseDetailScreen() {
       </View>
 
       <View style={styles.actions}>
-        <PrimaryButton label="Ver linea de tiempo" onPress={() => navigateTo(`/caso/${item.id}/timeline`)} />
-        <PrimaryButton label="Ver opciones" variant="secondary" onPress={() => navigateTo(`/caso/${item.id}/opciones`)} />
+        <PrimaryButton label="Revisar evidencia" onPress={() => navigateTo(`/caso/${id}/evidencia`)} />
+        <PrimaryButton label="Entender mi situación" variant="secondary" onPress={() => navigateTo(`/caso/${id}/diagnostico`)} />
+        <PrimaryButton label="Ver linea de tiempo" onPress={() => navigateTo(`/caso/${id}/timeline`)} />
+        <PrimaryButton label="Ver opciones" variant="secondary" onPress={() => navigateTo(`/caso/${id}/opciones`)} />
       </View>
     </ScreenShell>
   );

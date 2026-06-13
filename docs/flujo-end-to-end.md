@@ -52,7 +52,13 @@ sequenceDiagram
     API->>D: Prioriza reglas determinísticas
     API->>R: Recupera contexto cuando corresponda
     API-->>A: Diagnóstico, fuentes y disclaimer
-    U->>A: Elige acción
+    U->>A: Revisa evidencia ficticia
+    A->>API: GET /cases/{caseId}/evidence
+    U->>A: Elige presentar descargo
+    A->>API: POST /cases/{caseId}/actions
+    API-->>A: Constancia + etapa actualizada + alerta
+    A-->>U: Seguimiento y confirmación
+    U->>A: Decide continuar por canal oficial
     A->>S: Abre URL oficial
 ```
 
@@ -67,7 +73,12 @@ sequenceDiagram
 | Checklist | `GET /cases/{caseId}` | Conectado |
 | Canal oficial | `GET /cases/{caseId}` | Conectado |
 | Voz a caso demo | Detección local + casos API | Conectado |
-| Diagnóstico explicado | `POST /diagnostico-claro` | API lista; falta pantalla |
+| Diagnóstico explicado | `POST /diagnostico-claro` | Conectado |
+| Evidencia del caso | `GET /cases/{caseId}/evidence` | Conectado |
+| Descargo ficticio | `POST /cases/{caseId}/actions` | Conectado para historia G11 |
+| Constancia | `GET /submissions/{submissionId}` | Conectado |
+| Seguimiento actualizado | `GET /cases/{caseId}/tracking` | Conectado |
+| Alertas persistentes demo | `GET /alerts` | Conectado |
 | Pregunta RAG libre | `GET /rag/search` | API lista; falta experiencia UI |
 | Consulta SAT real | Integración externa | Fuera del MVP actual |
 
@@ -105,15 +116,20 @@ npm run start:dev:tunnel -- --clear
 - Las fuentes OCR y la tabla parcial de infracciones no deben convertirse automáticamente
   en reglas de producción.
 
-## Siguiente corte vertical
+## Historia vertical completada: descargo G11
 
-La siguiente integración debe añadir una pantalla de diagnóstico que consuma
-`POST /diagnostico-claro` y muestre:
+La historia principal demostrable usa `demo-g11-descuento`:
 
-- explicación simple;
-- plazo con advertencia de cómputo;
-- riesgo;
-- acciones disponibles;
-- fuentes;
-- disclaimer;
-- CTA hacia el canal oficial.
+1. El ciudadano revisa evidencia ficticia y trazable.
+2. Recibe un diagnóstico claro con etapa, plazo, riesgos, fuentes y disclaimer.
+3. Decide presentar un descargo.
+4. Completa checklist, explicación y adjunto ficticio.
+5. FastAPI registra el trámite en SQLite y genera una constancia `DEMO-EXP-*`.
+6. El caso avanza a emisión del IFI.
+7. Seguimiento y centro de alertas muestran la confirmación persistida.
+
+Para reiniciar la demostración:
+
+```powershell
+Invoke-RestMethod -Method Post http://127.0.0.1:8000/demo/reset
+```
