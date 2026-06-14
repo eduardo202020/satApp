@@ -52,6 +52,7 @@ type ApiCase = {
   plate: string;
   amount: number | null;
   issue_date: string;
+  query_date?: string;
   due_date_label: string;
   stage_name: string;
   risk_level: 'low' | 'medium' | 'high' | 'critical';
@@ -182,7 +183,8 @@ function mapCase(item: ApiCase): CaseRecord {
     amount: item.amount === null ? 'Monto por verificar' : `S/ ${item.amount.toFixed(2)}`,
     dueDate: item.due_date_label,
     issueDate: item.issue_date,
-    location: item.evidence?.[0]?.location ?? 'Caso demo sin ubicación real',
+    queryDate: item.query_date,
+    location: item.evidence?.[0]?.location ?? 'Ubicacion pendiente de validacion',
     status: item.stage_name,
     risk: riskLabel(item.risk_level),
     canDiscount: item.discount_available,

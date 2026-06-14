@@ -13,7 +13,7 @@ export function useAlerts() {
         if (active && items.length > 0) setAlerts(items);
       })
       .catch(() => {
-        // Keep local demo alerts while FastAPI is offline.
+        // Keep local alerts while FastAPI is offline.
       });
     return () => {
       active = false;

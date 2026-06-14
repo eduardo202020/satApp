@@ -22,6 +22,7 @@ export type CaseRecord = {
   amount: string;
   dueDate: string;
   issueDate: string;
+  queryDate?: string;
   location: string;
   status: CaseStatus;
   risk: RiskLevel;

@@ -15,7 +15,7 @@ export default function ProfileValidationScreen() {
       <View style={styles.card}>
         <Text style={styles.label}>Metodo sugerido</Text>
         <Text style={styles.title}>Codigo por SMS</Text>
-        <Text style={styles.text}>Enviaremos un codigo al numero asociado a tu cuenta demo.</Text>
+        <Text style={styles.text}>Enviaremos un codigo al numero asociado a tu cuenta.</Text>
       </View>
       <PrimaryButton label="Enviar codigo" />
     </ScreenShell>

@@ -28,7 +28,7 @@ export default function CaseTrackingScreen() {
     <ScreenShell
       eyebrow="Seguimiento"
       title={`Caso ${item.ticketCode ?? item.id}`}
-      description="Tu acción ya forma parte del expediente demo y puedes seguir su avance desde aquí."
+      description="Tu accion ya forma parte del expediente y puedes seguir su avance desde aqui."
     >
       <View style={styles.card}>
         <Text style={styles.label}>Estado actual</Text>

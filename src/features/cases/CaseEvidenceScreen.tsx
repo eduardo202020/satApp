@@ -18,19 +18,19 @@ export default function CaseEvidenceScreen() {
     <ScreenShell
       eyebrow="Detectar"
       title="Revisa qué ocurrió"
-      description="Antes de decidir, contrasta la información registrada. Todo lo mostrado en esta historia es ficticio."
+      description="Antes de decidir, contrasta la informacion registrada en el caso."
       compact
     >
       <View style={styles.banner}>
         <MaterialCommunityIcons name="shield-check-outline" size={24} color={colors.blue} />
-        <Text style={styles.bannerText}>Caso demo: no contiene datos personales ni evidencia real.</Text>
+        <Text style={styles.bannerText}>Verifica fecha, lugar y evidencia antes de pagar o presentar descargo.</Text>
       </View>
       <View style={styles.list}>
         {(item.evidence ?? []).map((evidence) => (
           <View style={styles.card} key={evidence.id}>
             <View style={styles.visual}>
               <MaterialCommunityIcons name={evidence.type === 'photo' ? 'camera-outline' : 'clipboard-text-outline'} size={54} color={colors.blue} />
-              <StatusPill label="Evidencia ficticia" tone="info" />
+              <StatusPill label="Evidencia registrada" tone="info" />
             </View>
             <Text style={styles.title}>{evidence.title}</Text>
             <Text style={styles.description}>{evidence.description}</Text>

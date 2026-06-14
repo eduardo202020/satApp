@@ -5,30 +5,39 @@ import { ScreenShell } from '../../shared/components/ScreenShell';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import { useConsultationOptions } from './hooks/useConsultationOptions';
+import { useCases } from '../cases/hooks/useCases';
 
 export default function HomeScreen() {
   const options = useConsultationOptions();
+  const { cases } = useCases();
+  const primaryCaseId = cases[0]?.id ?? 'G11';
+
+  function openOption(href: string) {
+    if (href === 'case-detail') {
+      navigateTo(`/caso/${primaryCaseId}`);
+      return;
+    }
+
+    if (href === 'case-options') {
+      navigateTo(`/caso/${primaryCaseId}/opciones`);
+      return;
+    }
+
+    navigateTo(href);
+  }
 
   return (
     <ScreenShell
-      eyebrow="Ruta clara"
+      eyebrow="Inicio"
       title="Que necesitas hacer hoy?"
-      description="Te guiamos paso a paso para entender una papeleta, conocer opciones y actuar a tiempo."
+      description="Consulta tu papeleta, revisa descuentos y sigue los pasos recomendados."
     >
-      <View style={styles.demoNotice}>
-        <MaterialCommunityIcons name="shield-check-outline" size={26} color={colors.navy} />
-        <View style={styles.noticeText}>
-          <Text style={styles.noticeTitle}>Demo con datos ficticios</Text>
-          <Text style={styles.noticeBody}>No usamos datos personales reales.</Text>
-        </View>
-      </View>
-
       <View style={styles.section}>
         {options.map((item) => (
           <Pressable
             key={item.title}
             style={styles.option}
-            onPress={() => navigateTo(item.href)}
+            onPress={() => openOption(item.href)}
           >
             <View style={styles.optionIcon}>
               <MaterialCommunityIcons name={item.icon} size={26} color={colors.blue} />
@@ -46,29 +55,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  demoNotice: {
-    alignItems: 'center',
-    backgroundColor: colors.blueLight,
-    borderRadius: 8,
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 16,
-    padding: 14,
-  },
-  noticeText: {
-    flex: 1,
-  },
-  noticeTitle: {
-    color: colors.ink,
-    fontSize: 14,
-    fontWeight: '900',
-  },
-  noticeBody: {
-    color: colors.muted,
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: 3,
-  },
   section: {
     gap: 10,
     marginTop: 18,
@@ -81,30 +67,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     gap: 12,
-    minHeight: 82,
-    padding: 14,
+    minHeight: 90,
+    padding: 16,
   },
   optionIcon: {
     alignItems: 'center',
     backgroundColor: colors.blueLight,
     borderRadius: 8,
-    height: 48,
+    height: 54,
     justifyContent: 'center',
-    width: 48,
+    width: 54,
   },
   optionText: {
     flex: 1,
   },
   optionTitle: {
     color: colors.ink,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '900',
   },
   optionDescription: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
-    lineHeight: 17,
+    lineHeight: 18,
     marginTop: 4,
   },
 });

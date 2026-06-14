@@ -17,7 +17,7 @@ export default function ConfirmationScreen() {
         <View style={styles.iconWrap}>
           <MaterialCommunityIcons name="check" size={50} color={colors.cream} />
         </View>
-        <Text style={styles.title}>Ruta clara actualizada</Text>
+        <Text style={styles.title}>Caso actualizado</Text>
         <Text style={styles.body}>Puedes volver a tus casos o iniciar una nueva consulta.</Text>
       </View>
       <View style={styles.actions}>

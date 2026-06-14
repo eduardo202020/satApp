@@ -25,7 +25,7 @@ export default function AlertDetailScreen() {
         <MaterialCommunityIcons name="clock-alert-outline" size={42} color={toneColor[alert.tone]} />
         <Text style={styles.title}>{alert.caseId}</Text>
         <Text style={styles.body}>
-          Aun puedes revisar tu ruta clara, entender opciones y decidir el siguiente paso.
+          Aun puedes revisar tu caso, entender opciones y decidir el siguiente paso.
         </Text>
       </View>
 

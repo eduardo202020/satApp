@@ -12,8 +12,8 @@ export type DrawerRoute = {
 export const drawerRoutes = [
   {
     name: '(tabs)',
-    title: 'Papeleta Clara',
-    icon: 'check-decagram-outline',
+    title: 'Inicio',
+    icon: 'home-outline',
   },
   {
     name: 'perfil',

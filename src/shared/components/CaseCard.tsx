@@ -33,7 +33,7 @@ export function CaseCard({ item, compact = false }: CaseCardProps) {
 
       {!compact && (
         <View style={styles.buttonRow}>
-          <PrimaryButton label="Ver ruta clara" onPress={() => navigateTo(`/caso/${item.id}`)} />
+          <PrimaryButton label="Ver detalle" onPress={() => navigateTo(`/caso/${item.id}`)} />
         </View>
       )}
     </Pressable>

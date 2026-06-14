@@ -23,14 +23,14 @@ export default function SubmissionReceiptScreen() {
     <ScreenShell
       eyebrow="Constancia"
       title="Descargo registrado"
-      description="La simulación generó una constancia y actualizó el seguimiento del caso."
+      description="Se genero una constancia y se actualizo el seguimiento del caso."
       compact
     >
       <View style={styles.success}>
         <MaterialCommunityIcons name="check-decagram" size={56} color={colors.green} />
         <StatusPill label="Registro exitoso" tone="safe" />
         <Text style={styles.receipt}>{submission?.receiptNumber ?? 'Generando constancia...'}</Text>
-        <Text style={styles.body}>{submission?.summary ?? 'Consultando el registro demo.'}</Text>
+        <Text style={styles.body}>{submission?.summary ?? 'Consultando el registro.'}</Text>
       </View>
       {!!submission && (
         <View style={styles.card}>

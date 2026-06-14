@@ -169,7 +169,7 @@ export default function VoiceAssistantScreen() {
           style={[styles.secondaryButton, !visibleTranscript && styles.disabledOutline]}
         >
           <MaterialCommunityIcons name="arrow-right-circle-outline" size={20} color={colors.blue} />
-          <Text style={styles.secondaryButtonText}>Procesar como caso ficticio</Text>
+          <Text style={styles.secondaryButtonText}>Buscar caso relacionado</Text>
         </Pressable>
 
         <Pressable

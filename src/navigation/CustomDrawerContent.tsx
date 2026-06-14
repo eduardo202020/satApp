@@ -75,8 +75,8 @@ export function CustomDrawerContent(props: DrawerContentComponentProps) {
           <MaterialCommunityIcons name="shield-check-outline" size={23} color={colors.blue} />
         </View>
         <View style={styles.footerCopy}>
-          <Text style={styles.footerTitle}>Modo demo activo</Text>
-          <Text style={styles.footerText}>Datos ficticios del prototipo</Text>
+          <Text style={styles.footerTitle}>Consulta segura</Text>
+          <Text style={styles.footerText}>Verifica tus datos antes de actuar.</Text>
         </View>
       </View>
     </View>
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     flexDirection: 'row',
     gap: 12,
-    minHeight: 54,
+    minHeight: 58,
     paddingHorizontal: 10,
   },
   drawerLinkActive: {
@@ -182,9 +182,9 @@ const styles = StyleSheet.create({
   linkLabel: {
     color: colors.muted,
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
-    lineHeight: 19,
+    lineHeight: 20,
   },
   linkLabelActive: {
     color: colors.navy,

@@ -9,7 +9,7 @@ export default function CasesListScreen() {
     <ScreenShell
       eyebrow="Seguimiento"
       title="Mis casos"
-      description="Retoma casos ya consultados, revisa plazos y continua tu ruta clara."
+      description="Retoma casos consultados, revisa plazos y continua con el siguiente paso."
     >
       {cases.map((item) => (
         <CaseCard item={item} key={item.id} />

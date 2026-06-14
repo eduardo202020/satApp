@@ -93,18 +93,21 @@ export const recommendedOptions: CaseOption[] = [
     description: 'Aprovecha el beneficio disponible antes del vencimiento.',
     tone: 'safe',
     icon: 'shield-check-outline',
+    action: 'pagar',
   },
   {
     title: 'Presentar descargo',
     description: 'Si no estas de acuerdo con la infraccion.',
     tone: 'info',
     icon: 'file-document-edit-outline',
+    action: 'presentar_descargo',
   },
   {
     title: 'Ver mas opciones',
     description: 'Apelacion y otras rutas segun la etapa.',
     tone: 'attention',
     icon: 'map-search-outline',
+    action: 'revisar_papeleta',
   },
 ];
 
@@ -145,37 +148,31 @@ export const alerts: CaseAlert[] = [
 export const consultationOptions = [
   {
     title: 'Consultar mi papeleta',
-    description: 'Busca por placa, numero de papeleta o documento.',
+    description: 'Ingresa placa, papeleta o documento.',
     icon: 'magnify-scan' as IconName,
     href: '/(drawer)/(tabs)/inicio/consulta',
   },
   {
-    title: 'Hablar con Papeleta Clara',
-    description: 'Dicta tu consulta y la convertimos en texto.',
+    title: 'Consultar por voz',
+    description: 'Habla y recibe orientacion en texto.',
     icon: 'microphone-outline' as IconName,
     href: '/(drawer)/(tabs)/inicio/voz',
   },
   {
-    title: 'Probar caso ficticio',
-    description: 'Explora ejemplos para conocer tu ruta clara.',
-    icon: 'flask-outline' as IconName,
-    href: '/(drawer)/(tabs)/inicio/resultado',
-  },
-  {
     title: 'Entender una papeleta',
-    description: 'Explicamos los conceptos principales.',
+    description: 'Revisa estado, monto y proximos pasos.',
     icon: 'text-box-search-outline' as IconName,
-    href: '/caso/demo-g11-descuento',
+    href: 'case-detail',
   },
   {
     title: 'Ver si tengo descuento',
     description: 'Revisa plazos y beneficios disponibles.',
     icon: 'clock-check-outline' as IconName,
-    href: '/caso/demo-g11-descuento/opciones',
+    href: 'case-options',
   },
   {
-    title: 'Revisar riesgo de captura o retencion',
-    description: 'Conoce el nivel de riesgo del caso.',
+    title: 'Ver riesgos y alertas',
+    description: 'Evita recargos, captura o retencion.',
     icon: 'alert-outline' as IconName,
     href: '/alertas',
   },

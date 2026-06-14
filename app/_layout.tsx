@@ -14,6 +14,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
           <Stack.Screen name="caso" options={{ headerShown: false }} />
+          <Stack.Screen name="papeleta" options={{ headerShown: false }} />
           <Stack.Screen name="alertas" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>

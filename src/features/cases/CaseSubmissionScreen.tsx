@@ -15,7 +15,7 @@ export default function CaseSubmissionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [checked, setChecked] = useState<string[]>([]);
   const [attached, setAttached] = useState(false);
-  const [statement, setStatement] = useState('No estoy de acuerdo con la papeleta G11 y solicito que se revise la evidencia ficticia adjunta.');
+  const [statement, setStatement] = useState('No estoy de acuerdo con la papeleta y solicito que se revise la evidencia adjunta.');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const ready = checked.length === requirements.length && attached && statement.trim().length >= 10;
@@ -28,11 +28,11 @@ export default function CaseSubmissionScreen() {
         action: 'presentar_descargo',
         userStatement: statement,
         checklist: checked,
-        attachments: ['sustento-demo-g11.pdf'],
+        attachments: ['sustento-descargo.pdf'],
       });
       navigateTo(`/caso/${id}/constancia?submissionId=${submission.id}`);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'No se pudo registrar el trámite demo.');
+      setError(reason instanceof Error ? reason.message : 'No se pudo registrar el tramite.');
     } finally {
       setSubmitting(false);
     }
@@ -42,7 +42,7 @@ export default function CaseSubmissionScreen() {
     <ScreenShell
       eyebrow="Actuar"
       title="Prepara tu descargo"
-      description="Simularemos el registro de un descargo sin enviarlo a ningún sistema oficial."
+      description="Completa los datos necesarios para registrar y seguir tu solicitud."
       compact
     >
       <View style={styles.card}>
@@ -64,13 +64,13 @@ export default function CaseSubmissionScreen() {
       <Pressable style={[styles.attachment, attached && styles.attachmentReady]} onPress={() => setAttached(!attached)}>
         <MaterialCommunityIcons name={attached ? 'file-check-outline' : 'file-plus-outline'} size={28} color={attached ? colors.green : colors.blue} />
         <View style={styles.attachmentText}>
-          <Text style={styles.rowText}>{attached ? 'sustento-demo-g11.pdf' : 'Adjuntar sustento demo'}</Text>
-          <Text style={styles.hint}>Archivo ficticio para demostrar el flujo.</Text>
+          <Text style={styles.rowText}>{attached ? 'sustento-descargo.pdf' : 'Adjuntar sustento'}</Text>
+          <Text style={styles.hint}>Agrega fotos, documentos o una explicacion que respalde tu caso.</Text>
         </View>
       </Pressable>
       {!!error && <Text style={styles.error}>{error}</Text>}
       <View style={styles.actions}>
-        <PrimaryButton label={submitting ? 'Registrando...' : 'Registrar descargo demo'} disabled={!ready || submitting} onPress={submit} />
+        <PrimaryButton label={submitting ? 'Registrando...' : 'Registrar descargo'} disabled={!ready || submitting} onPress={submit} />
       </View>
     </ScreenShell>
   );

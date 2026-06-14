@@ -7,7 +7,7 @@ import { colors } from '../../shared/styles/theme';
 const securityItems = [
   'Los enlaces inteligentes usan tokens temporales.',
   'La validacion protege casos abiertos desde alertas.',
-  'Este prototipo no guarda datos personales reales.',
+  'Tus consultas se muestran solo cuando confirmas tu identidad.',
 ];
 
 export default function ProfileSecurityScreen() {
