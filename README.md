@@ -24,7 +24,7 @@ El prototipo está pensado para personas no técnicas, especialmente usuarios de
 | Recurso | Link |
 |---|---|
 | 🎥 Video demo en YouTube | [Ver presentación de SatApp](https://youtu.be/REEMPLAZAR_VIDEO_DEMO) |
-| 🌐 Demo web | [Abrir SatApp Web](https://example.com/satapp-web) |
+| 🌐 Demo web | [Abrir SatApp Web](http://eduardoguev.me/satApp/) |
 | 📦 APK para instalar | [Descargar APK desde Google Drive](https://drive.google.com/file/d/REEMPLAZAR_ID_DEL_APK/view?usp=sharing) |
 | 🧠 Backend RAG | [`eduardo202020/sat-rag`](https://github.com/eduardo202020/sat-rag) |
 
