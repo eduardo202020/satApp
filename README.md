@@ -17,10 +17,12 @@ El foco del prototipo es la claridad para usuarios no tecnicos, especialmente pe
 La pantalla de consulta permite buscar usando solo uno de estos datos:
 
 - Placa del vehiculo.
-- Codigo o numero de papeleta.
+- Codigo de infraccion o numero de papeleta.
 - DNI.
 
 Los campos estan segmentados por caracter para reducir errores de digitacion. La placa se llena como `ABC-123`, el DNI como 8 digitos y el codigo de infraccion permite escoger `G`, `L` o `M` y luego escribir numeros.
+
+Cada card de consulta tiene una lupa en la esquina superior derecha. Cuando el dato esta completo, tocar esa lupa ejecuta la busqueda de inmediato. Tambien se puede buscar presionando `realizar` desde el teclado, sin tener que bajar hasta un boton final.
 
 La busqueda normaliza los valores, ignora guiones y mayusculas/minusculas, y compara contra:
 
@@ -34,41 +36,79 @@ Si encuentra una o mas papeletas, navega a la pantalla de resultado.
 
 ### Resultado de consulta
 
-La pantalla de resultado muestra las papeletas asociadas al dato ingresado. Si encuentra una sola, muestra tambien el siguiente paso recomendado y permite entrar al detalle del caso.
+La pantalla de resultado muestra una lista de papeletas asociadas al dato ingresado. Cada card conserva informacion util para decidir si abrirla:
 
-Actualmente esta pantalla funciona como listado de resultados. El siguiente paso de producto recomendado es convertirla en una pantalla de decision inmediata, por ejemplo:
+- codigo e infraccion;
+- placa;
+- monto;
+- vencimiento o plazo;
+- riesgo;
+- estado general.
 
-```text
-Encontramos 1 papeleta
-Estado: Plazo inicial
-Riesgo: Bajo
-Descuento disponible
-
-[Pagar con descuento]
-[Presentar descargo]
-[Ver evidencia]
-```
+Cada papeleta tiene una flecha grande en la esquina inferior derecha para entrar al detalle. La pantalla ya no muestra botones inferiores de "siguiente paso", "ver detalle" o "nueva consulta"; el objetivo es que el resultado sea limpio, escaneable y orientado a seleccionar una papeleta.
 
 ### Detalle del caso
 
 Cada papeleta tiene una vista ordenada con:
 
-- codigo de papeleta;
+- numero y codigo de papeleta;
 - infraccion;
 - placa;
 - monto;
 - fecha de emision;
+- fecha de consulta;
+- plazo o vencimiento;
 - lugar;
 - estado;
 - riesgo;
+- descuento disponible o no;
 - siguiente paso.
 
 Desde esta pantalla se puede ir a:
 
-- evidencia;
-- diagnostico claro;
+- revisar evidencia;
+- entender mi situacion;
 - linea de tiempo;
-- opciones disponibles.
+- opciones y descuento.
+
+Estas entradas se muestran como cards con icono, descripcion corta y flecha, para que cada seccion tenga una funcion clara y no parezca una lista de botones repetidos.
+
+### Evidencia
+
+La pantalla de evidencia muestra la fotopapeleta de prueba asociada al caso. Por ahora todos los casos demo usan el mismo asset local:
+
+```text
+assets/evidence/papeleta.gif
+```
+
+La imagen se puede pellizcar para hacer zoom y arrastrar para revisar detalles. El objetivo es cubrir el insight del desafio: antes de pagar o reclamar, el ciudadano necesita ver la foto o evidencia y entender que ocurrio.
+
+La pantalla mantiene informacion basica de la evidencia, lugar, fecha y un boton `Regresar` que vuelve al detalle del caso.
+
+### Entender mi situacion
+
+`Entender mi situacion` esta pensada para usuarios no tecnicos, especialmente personas que necesitan una explicacion simple antes de decidir.
+
+Muestra:
+
+- "Tu caso, en simple": etapa actual, papeleta, placa, monto y riesgo.
+- "Lo que esta pasando": traduccion ciudadana de la papeleta, codigo, hecho registrado y etapa.
+- "Fechas y descuento": dias calendario, dias habiles, descuento del 83%, descuento menor del 67%, monto estimado y ahorro.
+- "Que puede pasar si no haces nada": riesgos concretos como perder descuento, Resolucion de Sancion, cobranza coactiva, captura vehicular o retencion bancaria.
+- "Que puedes hacer ahora": acciones explicadas en lenguaje simple.
+- "De donde sale esta explicacion": fuentes del RAG y reglas usadas.
+
+Consume `POST /diagnostico-claro` desde `sat-rag`. Si el backend no responde, usa resumen local para mantener la navegacion.
+
+### Linea de tiempo
+
+La linea de tiempo muestra la ruta PAS/PEC del procedimiento:
+
+```text
+PIT emitida -> PAS -> Resolucion de Sancion -> Sancion firme -> PEC -> Medidas cautelares
+```
+
+Su funcion no es repetir los descuentos, sino ubicar al ciudadano en la ruta del caso y mostrar que podria pasar despues si no actua.
 
 ### Descuentos
 
@@ -87,6 +127,14 @@ La pantalla de opciones muestra:
 - monto a pagar;
 - dias habiles transcurridos;
 - cronologia de descuentos.
+
+En la cronologia de descuentos se sombrea el tramo vigente y aparece el pill `Estado actual`, para reconocer rapidamente si el caso esta en el 83%, en el 67% o fuera del beneficio.
+
+Las opciones se muestran como cards accionables:
+
+- `Pagar con % de descuento` abre `https://www.sat.gob.pe/pagosenlinea/`.
+- `Presentar descargo` lleva al flujo interno de preparacion de tramite.
+- `Ver mas opciones` lleva al checklist del caso.
 
 Este calculo es informativo y debe contrastarse con el expediente y canales oficiales.
 
@@ -179,7 +227,7 @@ La API entrega:
 - checklist;
 - canal oficial recomendado;
 - evidencia;
-- diagnostico claro.
+- explicacion para "Entender mi situacion".
 
 ## Datos de prueba
 
@@ -187,16 +235,21 @@ Con backend `sat-rag`, los casos principales son:
 
 | Placa | Codigo | Caso | Situacion |
 |---|---|---|---|
-| `DEM001` | `G11` | `demo-g11-descuento` | Plazo inicial, descuento disponible |
-| `DEM002` | `G27` | `demo-g27-plazo-proximo` | Plazo inicial proximo a vencer |
-| `DEM003` | `M03` | `demo-m03-sancion-firme` | Sancion firme, riesgo alto |
-| `DEM004` | `M42` | `demo-m42-riesgo-coactivo` | REC/coactiva, riesgo critico |
+| `DEM001` | `G11` | `demo-g11-descuento` | Emitida ayer, descuento del 83% |
+| `DEM002` | `G27` | `demo-g27-plazo-proximo` | Emitida hace 5 dias, plazo inicial |
+| `DEM003` | `M03` | `demo-m03-sancion-firme` | Emitida hace 10 dias, sancion firme |
+| `DEM005` | `G27` | `demo-g27-segunda-ventana` | Emitida hace 10 dias, descuento menor del 67% |
+| `DEM004` | `M42` | `demo-m42-riesgo-coactivo` | Emitida hace 10 dias, REC/coactiva |
 
 En modo local, la app tambien acepta aliases para facilitar pruebas:
 
 | Dato | Resultado esperado |
 |---|---|
 | `DEM001` | Caso G11 |
+| `DEM002` | Caso G27 inicial |
+| `DEM003` | Caso M03 |
+| `DEM004` | Caso M42 |
+| `DEM005` | Caso G27 con descuento menor |
 | `ABC123` o `ABC-123` | Caso G11 |
 | `G11` o `G11125456` | Caso G11 |
 | `45678901` | Casos asociados a ese DNI |
@@ -315,9 +368,17 @@ Ya existe:
 
 - consulta por placa, DNI y papeleta;
 - entrada guiada por caracteres;
+- lupa accionable por card de consulta;
+- busqueda con `realizar` desde el teclado;
 - busqueda con aliases;
+- resultado como lista de papeletas con flecha a detalle;
 - detalle del caso;
+- evidencia con fotopapeleta, pinch zoom y arrastre;
+- entender mi situacion con explicacion ciudadana desde `sat-rag`;
+- linea de tiempo PAS/PEC;
 - calculo orientativo de descuentos;
+- cronologia de descuentos con `Estado actual`;
+- opciones accionables para pago, descargo y checklist;
 - voz con transcripcion;
 - rutas profundas;
 - integracion inicial con `sat-rag`;
@@ -326,9 +387,10 @@ Ya existe:
 
 Pendiente recomendado:
 
-- convertir Resultado en pantalla de decision inmediata;
-- mostrar acciones primarias por etapa sin obligar a entrar al detalle;
-- conectar botones de pago, expediente y canales oficiales con URLs finales verificadas;
+- hacer interactivo el checklist y guardar avances del usuario;
+- simular pago, apelacion y regularizacion ademas del descargo;
+- conectar expediente y canales oficiales con URLs finales verificadas;
+- generar alertas locales desde reglas de plazo;
 - validar reglas legales vigentes antes de produccion;
 - endurecer privacidad, consentimiento y manejo de datos reales;
 - mejorar persistencia de usuario y casos reales cuando exista integracion oficial.
