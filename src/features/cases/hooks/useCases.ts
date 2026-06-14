@@ -2,9 +2,20 @@ import { useEffect, useState } from 'react';
 
 import { fetchKnowledgeCases } from '../../../shared/api/satApi';
 import { cases as prototypeCases } from '../../../shared/data/prototypeData';
+import {
+  getPendingRegisteredCases,
+  subscribePendingRegisteredCases,
+} from '../pendingRegistrations';
 
 export function useCases() {
-  const [cases, setCases] = useState(prototypeCases);
+  const [sourceCases, setSourceCases] = useState(prototypeCases);
+  const [registeredCases, setRegisteredCases] = useState(getPendingRegisteredCases());
+  const cases = [
+    ...registeredCases,
+    ...sourceCases.filter((sourceCase) => !registeredCases.some((item) => item.id === sourceCase.id)),
+  ];
+
+  useEffect(() => subscribePendingRegisteredCases(setRegisteredCases), []);
 
   useEffect(() => {
     let active = true;
@@ -12,7 +23,7 @@ export function useCases() {
     fetchKnowledgeCases()
       .then((items) => {
         if (active && items.length > 0) {
-          setCases(items);
+          setSourceCases(items);
         }
       })
       .catch(() => {

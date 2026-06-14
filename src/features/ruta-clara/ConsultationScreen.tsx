@@ -1,8 +1,15 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
+import {
+  documentSegments,
+  plateSegments,
+  SegmentedField,
+  ticketCodeSegments,
+  type SegmentConfig,
+} from '../../shared/components/SegmentedField';
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
@@ -11,20 +18,14 @@ import { normalizeSearchValue, type CaseSearchField, type CaseSearchRequest } fr
 
 const inputs = [
   {
-    segments: [
-      { kind: 'letter', length: 3, separator: '-' },
-      { kind: 'number', length: 3 },
-    ],
+    segments: plateSegments,
     helper: 'Formato guiado: ABC-123',
     icon: 'car-outline',
     id: 'plate',
     label: 'Placa del vehiculo',
   },
   {
-    segments: [
-      { choices: ['G', 'L', 'M'], kind: 'choice', length: 1 },
-      { kind: 'number', length: 8 },
-    ],
+    segments: ticketCodeSegments,
     helper: 'Usa G11 o el codigo completo de 9 caracteres',
     icon: 'file-document-outline',
     id: 'ticket',
@@ -32,7 +33,7 @@ const inputs = [
     mode: 'code',
   },
   {
-    segments: [{ kind: 'number', length: 8 }],
+    segments: documentSegments,
     helper: 'DNI de 8 digitos',
     icon: 'account-outline',
     id: 'document',
@@ -46,15 +47,6 @@ const inputs = [
   mode?: 'code';
   segments: SegmentConfig[];
 }>;
-
-type SegmentConfig = {
-  choices?: string[];
-  kind: SegmentKind;
-  length: number;
-  separator?: string;
-};
-
-type SegmentKind = 'choice' | 'letter' | 'number';
 
 export default function ConsultationScreen() {
   const [values, setValues] = useState<Record<CaseSearchField, string>>({
@@ -93,15 +85,24 @@ export default function ConsultationScreen() {
 
           return (
             <SegmentedField
-              canSearch={Boolean(fieldSearchRequest)}
-              field={item.id}
+              actionLabel={`Buscar por ${item.label}`}
+              actionReady={Boolean(fieldSearchRequest)}
               helper={item.helper}
               icon={item.icon}
               key={item.label}
               label={item.label}
               mode={item.mode}
+              onAction={() => {
+                if (fieldSearchRequest) {
+                  searchCase(fieldSearchRequest);
+                }
+              }}
               onChange={(value) => updateField(item.id, value)}
-              onSearch={(request) => searchCase(request)}
+              onSubmit={() => {
+                if (fieldSearchRequest) {
+                  searchCase(fieldSearchRequest);
+                }
+              }}
               segments={item.segments}
               value={values[item.id]}
             />
@@ -122,220 +123,6 @@ export default function ConsultationScreen() {
       </View>
     </ScreenShell>
   );
-}
-
-function SegmentedField({
-  canSearch,
-  field,
-  helper,
-  icon,
-  label,
-  mode,
-  onChange,
-  onSearch,
-  segments,
-  value,
-}: {
-  canSearch: boolean;
-  field: CaseSearchField;
-  helper: string;
-  icon: IconName;
-  label: string;
-  mode?: 'code';
-  onChange: (value: string) => void;
-  onSearch: (request: CaseSearchRequest) => void;
-  segments: SegmentConfig[];
-  value: string;
-}) {
-  const segmentKinds = segments.flatMap((segment) => Array.from({ length: segment.length }, () => segment.kind));
-  const segmentChoices = segments.flatMap((segment) => Array.from({ length: segment.length }, () => segment.choices ?? []));
-  const totalLength = segmentKinds.length;
-  const refs = useRef<Array<TextInput | null>>([]);
-  const [openChoiceIndex, setOpenChoiceIndex] = useState<number | null>(null);
-  const chars = Array.from({ length: totalLength }, (_, index) => value[index] ?? '');
-
-  function updateCharacter(rawValue: string, index: number) {
-    const sanitized = sanitizeSegmentValue(rawValue);
-    const nextChars = [...chars];
-
-    if (sanitized.length > 1) {
-      let targetIndex = index;
-
-      sanitized.split('').forEach((char) => {
-        while (targetIndex < totalLength && !isAllowedForKind(char, segmentKinds[targetIndex], segmentChoices[targetIndex])) {
-          targetIndex += 1;
-        }
-
-        if (targetIndex < totalLength) {
-          nextChars[targetIndex] = char;
-          targetIndex += 1;
-        }
-      });
-      onChange(nextChars.join('').slice(0, totalLength));
-      refs.current[Math.min(targetIndex, totalLength - 1)]?.focus();
-      return;
-    }
-
-    nextChars[index] = isAllowedForKind(sanitized, segmentKinds[index], segmentChoices[index]) ? sanitized : '';
-    onChange(nextChars.join('').slice(0, totalLength));
-
-    if (nextChars[index] && index < totalLength - 1) {
-      refs.current[index + 1]?.focus();
-    }
-  }
-
-  function selectChoice(choice: string, index: number) {
-    const nextChars = [...chars];
-    nextChars[index] = choice;
-    onChange(nextChars.join('').slice(0, totalLength));
-    setOpenChoiceIndex(null);
-    refs.current[index + 1]?.focus();
-  }
-
-  function handleBackspace(index: number) {
-    if (chars[index] || index === 0) {
-      return;
-    }
-
-    refs.current[index - 1]?.focus();
-  }
-
-  function searchCurrentValue() {
-    const request = getFieldSearchRequest(field, chars.join(''));
-    if (request) {
-      onSearch(request);
-    }
-  }
-
-  function handleSubmit(index: number) {
-    const request = getFieldSearchRequest(field, chars.join(''));
-    if (request) {
-      onSearch(request);
-      return;
-    }
-
-    if (index < totalLength - 1) {
-      refs.current[index + 1]?.focus();
-    }
-  }
-
-  let charIndex = 0;
-
-  return (
-    <View style={styles.inputCard}>
-      <View style={styles.inputHeader}>
-        <View style={styles.inputIcon}>
-          <MaterialCommunityIcons name={icon} size={34} color={colors.blue} />
-        </View>
-        <View style={styles.inputText}>
-          <Text style={styles.inputLabel}>{label}</Text>
-          <Text style={styles.inputHint}>{helper}</Text>
-        </View>
-        <Pressable
-          accessibilityLabel={`Buscar por ${label}`}
-          disabled={!canSearch}
-          hitSlop={8}
-          onPress={searchCurrentValue}
-          style={[styles.cardSearchButton, canSearch && styles.cardSearchButtonReady]}
-        >
-          <MaterialCommunityIcons
-            name="magnify"
-            size={32}
-            color={canSearch ? colors.cream : colors.muted}
-          />
-        </Pressable>
-      </View>
-      <View style={[styles.segmentRow, mode === 'code' && styles.segmentRowCode]}>
-        {segments.map((segment, groupIndex) => {
-          if (segment.kind === 'choice') {
-            const currentIndex = charIndex;
-            charIndex += segment.length;
-
-            return (
-              <View key={`group-${groupIndex}`} style={styles.choiceGroup}>
-                <Pressable
-                  onPress={() => setOpenChoiceIndex(openChoiceIndex === currentIndex ? null : currentIndex)}
-                  style={[styles.choiceButton, chars[currentIndex] && styles.choiceButtonActive]}
-                >
-                  <Text style={[styles.choiceButtonText, chars[currentIndex] && styles.choiceButtonTextActive]}>
-                    {chars[currentIndex] || 'Tipo'}
-                  </Text>
-                  <MaterialCommunityIcons
-                    name={openChoiceIndex === currentIndex ? 'chevron-up' : 'chevron-down'}
-                    size={16}
-                    color={chars[currentIndex] ? colors.cream : colors.muted}
-                  />
-                </Pressable>
-              </View>
-            );
-          }
-
-          const boxes = Array.from({ length: segment.length }, () => {
-            const currentIndex = charIndex;
-            const kind = segmentKinds[currentIndex];
-            charIndex += 1;
-            return (
-              <TextInput
-                autoCapitalize={kind === 'letter' ? 'characters' : 'none'}
-                blurOnSubmit={false}
-                key={currentIndex}
-                keyboardType={kind === 'number' ? 'number-pad' : 'default'}
-                maxLength={1}
-                onChangeText={(rawValue) => updateCharacter(rawValue, currentIndex)}
-                onKeyPress={({ nativeEvent }) => {
-                  if (nativeEvent.key === 'Backspace') {
-                    handleBackspace(currentIndex);
-                  }
-                }}
-                onSubmitEditing={() => handleSubmit(currentIndex)}
-                ref={(ref) => {
-                  refs.current[currentIndex] = ref;
-                }}
-                returnKeyType={currentIndex === totalLength - 1 ? 'search' : 'next'}
-                selectTextOnFocus
-                style={[styles.segmentBox, mode === 'code' && styles.segmentBoxCode]}
-                value={chars[currentIndex]}
-              />
-            );
-          });
-
-          return (
-            <View key={`group-${groupIndex}`} style={styles.segmentGroup}>
-              {boxes}
-              {segment.separator ? <Text style={styles.fixedSeparator}>{segment.separator}</Text> : null}
-            </View>
-          );
-        })}
-      </View>
-      {openChoiceIndex !== null ? (
-        <View style={styles.choiceMenu}>
-          {segments
-            .find((segment) => segment.kind === 'choice')
-            ?.choices?.map((choice) => (
-              <Pressable key={choice} onPress={() => selectChoice(choice, openChoiceIndex)} style={styles.choiceMenuOption}>
-                <Text style={styles.choiceMenuText}>{choice}</Text>
-              </Pressable>
-            ))}
-        </View>
-      ) : null}
-    </View>
-  );
-}
-
-function sanitizeSegmentValue(value: string) {
-  return value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-}
-
-function isAllowedForKind(value: string, kind: SegmentKind, choices: string[]) {
-  if (!value) {
-    return false;
-  }
-
-  if (kind === 'choice') {
-    return choices.includes(value);
-  }
-
-  return kind === 'number' ? /^[0-9]$/.test(value) : /^[A-Z]$/.test(value);
 }
 
 function getSearchRequest(values: Record<CaseSearchField, string>): CaseSearchRequest | null {
@@ -378,168 +165,9 @@ function buildQueryParams(values: CaseSearchRequest) {
 }
 
 const styles = StyleSheet.create({
-  list: {
+  actions: {
     gap: 10,
-    marginTop: 16,
-  },
-  inputCard: {
-    backgroundColor: colors.card,
-    borderColor: colors.line,
-    borderRadius: 8,
-    borderWidth: 1,
-    minHeight: 78,
-    padding: 16,
-  },
-  inputHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 14,
-  },
-  inputIcon: {
-    alignItems: 'center',
-    backgroundColor: colors.blueLight,
-    borderRadius: 14,
-    height: 58,
-    justifyContent: 'center',
-    width: 58,
-  },
-  inputText: {
-    flex: 1,
-  },
-  cardSearchButton: {
-    alignItems: 'center',
-    backgroundColor: colors.background,
-    borderColor: colors.line,
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 54,
-    justifyContent: 'center',
-    opacity: 0.55,
-    width: 54,
-  },
-  cardSearchButtonReady: {
-    backgroundColor: colors.navy,
-    borderColor: colors.navy,
-    opacity: 1,
-  },
-  inputLabel: {
-    color: colors.ink,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  inputHint: {
-    color: colors.muted,
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  segmentRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'nowrap',
-    gap: 5,
-    justifyContent: 'flex-start',
-    marginLeft: -2,
-    marginTop: 16,
-    width: '100%',
-  },
-  segmentRowCode: {
-    backgroundColor: colors.background,
-    borderColor: colors.line,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 6,
-    justifyContent: 'center',
-    marginLeft: 0,
-    paddingHorizontal: 6,
-    paddingVertical: 8,
-  },
-  segmentGroup: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 5,
-  },
-  choiceGroup: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  choiceButton: {
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    borderColor: colors.line,
-    borderRadius: 8,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 2,
-    height: 40,
-    justifyContent: 'center',
-    width: 52,
-  },
-  choiceButtonActive: {
-    backgroundColor: colors.navy,
-    borderColor: colors.navy,
-  },
-  choiceButtonText: {
-    color: colors.ink,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  choiceButtonTextActive: {
-    color: colors.cream,
-  },
-  choiceMenu: {
-    alignSelf: 'center',
-    backgroundColor: colors.card,
-    borderColor: colors.line,
-    borderRadius: 12,
-    borderWidth: 1,
-    elevation: 4,
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 8,
-    padding: 8,
-    shadowColor: colors.ink,
-    shadowOffset: { height: 2, width: 0 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-  },
-  choiceMenuOption: {
-    alignItems: 'center',
-    backgroundColor: colors.blueLight,
-    borderRadius: 8,
-    height: 40,
-    justifyContent: 'center',
-    width: 44,
-  },
-  choiceMenuText: {
-    color: colors.navy,
-    fontSize: 17,
-    fontWeight: '900',
-  },
-  segmentBox: {
-    backgroundColor: colors.background,
-    borderColor: colors.line,
-    borderRadius: 8,
-    borderWidth: 1,
-    color: colors.ink,
-    fontSize: 17,
-    fontWeight: '900',
-    height: 40,
-    padding: 0,
-    textAlign: 'center',
-    width: 30,
-  },
-  segmentBoxCode: {
-    backgroundColor: colors.card,
-    fontSize: 15,
-    height: 40,
-    width: 24,
-  },
-  fixedSeparator: {
-    color: colors.ink,
-    fontSize: 20,
-    fontWeight: '900',
-    marginHorizontal: 1,
+    marginTop: 18,
   },
   helpCard: {
     alignItems: 'flex-start',
@@ -557,8 +185,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 18,
   },
-  actions: {
+  list: {
     gap: 10,
-    marginTop: 18,
+    marginTop: 16,
   },
 });

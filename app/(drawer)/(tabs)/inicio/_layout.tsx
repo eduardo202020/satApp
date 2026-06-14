@@ -9,6 +9,7 @@ export default function InicioStackLayout() {
       <Stack.Screen name="consulta" options={{ title: 'Consulta' }} />
       <Stack.Screen name="voz" options={{ title: 'Consulta por voz' }} />
       <Stack.Screen name="resultado" options={{ title: 'Resultado' }} />
+      <Stack.Screen name="registrar-papeleta" options={{ title: 'Registrar papeleta' }} />
       <Stack.Screen name="confirmacion" options={{ title: 'Confirmacion' }} />
     </Stack>
   );

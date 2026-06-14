@@ -24,6 +24,7 @@ export default function ResultScreen() {
     : cases.filter((item) => item.id === caseId);
   const hasMatches = matches.length > 0;
   const resultCountLabel = matches.length === 1 ? '1 papeleta' : `${matches.length} papeletas`;
+  const registrationQuery = buildRegistrationQuery(queryField, queryInput);
 
   return (
     <ScreenShell
@@ -32,7 +33,7 @@ export default function ResultScreen() {
       description={
         hasMatches
           ? `Estas son las papeletas asociadas a ${searchFieldLabel(queryField)}.`
-          : 'Verifica los datos ingresados o intenta con placa, DNI o numero de papeleta.'
+          : 'Puede que el SAT aun no haya procesado la papeleta. Si ya la tienes, registrala para seguimiento.'
       }
     >
       {hasMatches ? (
@@ -52,10 +53,25 @@ export default function ResultScreen() {
             <Text style={styles.emptyTitle}>Datos consultados</Text>
             <Text style={styles.emptyValue}>{queryInput || 'Sin dato ingresado'}</Text>
             <Text style={styles.emptyText}>
-              No hay papeletas asociadas a ese dato en la informacion cargada. Revisa si la placa, DNI o papeleta estan bien escritos.
+              No encontramos papeletas asociadas a ese dato. Si la papeleta fue emitida hace poco, puede tardar unos dias en aparecer.
             </Text>
           </View>
+          <View style={styles.registerCard}>
+            <View style={styles.registerIcon}>
+              <MaterialCommunityIcons name="file-plus-outline" size={30} color={colors.blue} />
+            </View>
+            <View style={styles.registerText}>
+              <Text style={styles.registerTitle}>Ya tengo la papeleta fisica</Text>
+              <Text style={styles.registerBody}>
+                Registrala de forma preliminar para recordar el pago, preparar documentos y seguirla cuando aparezca en SAT.
+              </Text>
+            </View>
+          </View>
           <View style={styles.actions}>
+            <PrimaryButton
+              label="Registrar papeleta"
+              onPress={() => navigateTo(`/(drawer)/(tabs)/inicio/registrar-papeleta?${registrationQuery}`)}
+            />
             <PrimaryButton label="Corregir datos" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')} />
             <PrimaryButton label="Consultar por voz" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/voz')} />
           </View>
@@ -63,6 +79,20 @@ export default function ResultScreen() {
       )}
     </ScreenShell>
   );
+}
+
+function buildRegistrationQuery(field?: CaseSearchField, input?: string) {
+  const params = [];
+
+  if (field) {
+    params.push(`field=${encodeURIComponent(field)}`);
+  }
+
+  if (input) {
+    params.push(`input=${encodeURIComponent(input)}`);
+  }
+
+  return params.join('&');
 }
 
 const styles = StyleSheet.create({
@@ -105,5 +135,37 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 10,
     textAlign: 'center',
+  },
+  registerBody: {
+    color: colors.muted,
+    fontSize: 13,
+    fontWeight: '700',
+    lineHeight: 18,
+    marginTop: 4,
+  },
+  registerCard: {
+    alignItems: 'center',
+    backgroundColor: colors.blueLight,
+    borderRadius: 8,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+    padding: 16,
+  },
+  registerIcon: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    height: 54,
+    justifyContent: 'center',
+    width: 54,
+  },
+  registerText: {
+    flex: 1,
+  },
+  registerTitle: {
+    color: colors.ink,
+    fontSize: 15,
+    fontWeight: '900',
   },
 });

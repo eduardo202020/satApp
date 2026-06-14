@@ -62,10 +62,10 @@ const styles = StyleSheet.create({
   },
   screenContent: {
     padding: 20,
-    paddingBottom: 104,
+    paddingBottom: 24,
   },
   compactContent: {
-    paddingBottom: 34,
+    paddingBottom: 24,
   },
   hero: {
     backgroundColor: colors.card,

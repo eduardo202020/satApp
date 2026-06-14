@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "satApp",
+    "name": "SatApp",
     "slug": "satApp",
     "scheme": "satapp",
     "version": "1.0.0",
@@ -42,6 +42,21 @@
           "androidSpeechServicePackages": [
             "com.google.android.googlequicksearchbox"
           ]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permite que Papeleta Clara acceda a tus fotos para adjuntar una imagen de la papeleta."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#062A78",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 300,
+          "resizeMode": "contain"
         }
       ],
       "expo-font"
