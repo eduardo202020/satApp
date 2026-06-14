@@ -180,6 +180,7 @@ function mapCase(item: ApiCase): CaseRecord {
     ticketCode: item.ticket_code,
     ticketNumber: item.ticket_number,
     searchTicketNumber: fallbackSearchTicketNumber(item),
+    searchAliases: fallbackSearchAliases(item),
     documentNumber: item.document_number ?? fallbackDocumentNumber(item),
     infraction: item.infraction?.descripcion ?? 'Descripción pendiente de validación',
     plate: item.plate,
@@ -218,6 +219,30 @@ function fallbackSearchTicketNumber(item: ApiCase) {
   if (code === 'M42') return 'M42000042';
 
   return undefined;
+}
+
+function fallbackDemoAlias(item: ApiCase) {
+  const code = item.ticket_code.toUpperCase();
+
+  if (code === 'G11') return 'DEM001';
+  if (code === 'G27') return 'DEM002';
+  if (code === 'M03') return 'DEM003';
+  if (code === 'M42') return 'DEM004';
+
+  return undefined;
+}
+
+function fallbackSearchAliases(item: ApiCase) {
+  return [
+    item.id,
+    item.ticket_code,
+    item.ticket_number,
+    item.plate,
+    item.document_number,
+    fallbackDocumentNumber(item),
+    fallbackSearchTicketNumber(item),
+    fallbackDemoAlias(item),
+  ].filter((value): value is string => Boolean(value));
 }
 
 function mapJourney(journey: ApiJourney) {

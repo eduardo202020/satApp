@@ -1,186 +1,209 @@
-# Papeleta Clara
+# Papeleta Clara - satApp
 
-Papeleta Clara es una aplicación móvil construida con Expo y React Native para ayudar a ciudadanos a entender, seguir y actuar frente a papeletas de tránsito administradas por el SAT de Lima.
+Aplicacion movil construida con Expo, React Native y TypeScript para ayudar a ciudadanos a consultar, entender y actuar frente a papeletas de transito vinculadas al SAT de Lima.
 
-La app está pensada como un copiloto ciudadano: convierte información legal, plazos, estados y canales oficiales en una ruta clara, visual y accionable. El prototipo usa datos ficticios y no almacena datos personales reales.
-
-## Propósito
-
-El objetivo principal es guiar al usuario en una secuencia simple:
+La app busca convertir un proceso administrativo dificil de entender en una ruta simple:
 
 ```text
-Detectar -> Comprender -> Decidir -> Actuar -> Seguir
+Consultar -> Entender -> Decidir -> Actuar -> Seguir
 ```
 
-En lugar de mostrar solo información suelta, la app organiza cada caso en pasos comprensibles: qué ocurrió, en qué etapa está, qué riesgo tiene, qué opciones existen y qué canal oficial corresponde.
+El foco del prototipo es la claridad para usuarios no tecnicos, especialmente personas adultas que necesitan saber rapidamente si tienen una papeleta, que significa, si aplica descuento, que riesgo existe y cual es el siguiente paso.
 
-## Funcionalidades Principales
+## Que hace actualmente
 
-### Inicio y Ruta Clara
+### Consulta por placa, DNI o papeleta
 
-La pantalla principal presenta accesos directos para:
+La pantalla de consulta permite buscar usando solo uno de estos datos:
 
-- Consultar una papeleta.
-- Probar un caso ficticio.
-- Hablar con Papeleta Clara mediante voz.
-- Entender una papeleta.
-- Revisar descuentos disponibles.
-- Revisar riesgos de captura o retención.
+- Placa del vehiculo.
+- Codigo o numero de papeleta.
+- DNI.
 
-Cada opción lleva a una pantalla concreta y mantiene el lenguaje simple para usuarios no técnicos.
+Los campos estan segmentados por caracter para reducir errores de digitacion. La placa se llena como `ABC-123`, el DNI como 8 digitos y el codigo de infraccion permite escoger `G`, `L` o `M` y luego escribir numeros.
 
-### Consulta por Voz
+La busqueda normaliza los valores, ignora guiones y mayusculas/minusculas, y compara contra:
 
-La app incluye una experiencia de consulta por voz inspirada en la interacción de notas de voz de WhatsApp, pero adaptada al estilo visual de Papeleta Clara.
+- placa;
+- DNI asociado;
+- codigo de infraccion;
+- numero de papeleta;
+- aliases de busqueda usados para pruebas.
 
-El usuario puede:
+Si encuentra una o mas papeletas, navega a la pantalla de resultado.
 
-- Iniciar una consulta tocando el micrófono.
-- Ver un contador mientras habla.
-- Ver una onda dinámica que responde al volumen real del micrófono.
-- Pausar la escucha.
-- Reanudar la escucha.
-- Cancelar con papelera.
-- Enviar la consulta transcrita.
-- Ver la transcripción reconocida.
-- Procesar localmente intenciones básicas, como descuento, riesgo o pago.
+### Resultado de consulta
 
-La transcripción usa `expo-speech-recognition`, por lo que requiere un build nativo o development build. No funciona en Expo Go estándar.
+La pantalla de resultado muestra las papeletas asociadas al dato ingresado. Si encuentra una sola, muestra tambien el siguiente paso recomendado y permite entrar al detalle del caso.
 
-### Casos Ficticios
+Actualmente esta pantalla funciona como listado de resultados. El siguiente paso de producto recomendado es convertirla en una pantalla de decision inmediata, por ejemplo:
 
-El prototipo trabaja con casos demo completamente ficticios, por ejemplo:
+```text
+Encontramos 1 papeleta
+Estado: Plazo inicial
+Riesgo: Bajo
+Descuento disponible
 
-- Papeleta en plazo inicial.
-- Papeleta con riesgo bajo.
-- Papeleta con sanción firme.
-- Papeleta en seguimiento.
+[Pagar con descuento]
+[Presentar descargo]
+[Ver evidencia]
+```
 
-Estos casos permiten demostrar el flujo sin usar datos personales reales.
+### Detalle del caso
 
-### Detalle del Caso
+Cada papeleta tiene una vista ordenada con:
 
-Cada caso muestra información ordenada:
+- codigo de papeleta;
+- infraccion;
+- placa;
+- monto;
+- fecha de emision;
+- lugar;
+- estado;
+- riesgo;
+- siguiente paso.
 
-- Código de papeleta.
-- Infracción.
-- Placa ficticia.
-- Monto.
-- Fecha de emisión.
-- Lugar.
-- Riesgo.
-- Estado.
-- Siguiente paso recomendado.
+Desde esta pantalla se puede ir a:
 
-También se incluyen pantallas de opciones, línea de tiempo, checklist y canal oficial.
+- evidencia;
+- diagnostico claro;
+- linea de tiempo;
+- opciones disponibles.
 
-### Alertas
+### Descuentos
 
-La app incluye un centro de alertas para mostrar recordatorios importantes, vencimientos o riesgos. Está pensado para que el usuario no pierda plazos relevantes.
+La app calcula una orientacion de descuento usando fecha de emision, fecha de consulta, codigo de infraccion y reglas cargadas en el proyecto.
 
-### Perfil
+Reglas consideradas:
 
-El drawer incluye una sección de perfil con:
+- 83% de descuento dentro de los primeros 5 dias habiles cuando el codigo no esta excluido.
+- 67% de descuento desde el sexto dia habil hasta antes de la Resolucion de Sancion, cuando corresponde.
+- Codigos `M` excluidos segun las reglas extraidas del conocimiento SAT/RAG.
 
-- Resumen del usuario ficticio.
-- Validación de identidad.
-- Preferencias.
-- Seguridad.
+La pantalla de opciones muestra:
 
-El objetivo es preparar el flujo para escenarios donde algunas acciones requieran validación antes de mostrar información sensible.
+- monto base;
+- ahorro estimado;
+- monto a pagar;
+- dias habiles transcurridos;
+- cronologia de descuentos.
 
-### Drawer Simplificado
+Este calculo es informativo y debe contrastarse con el expediente y canales oficiales.
 
-El menú lateral fue simplificado para mantener la app enfocada:
+### Opciones por etapa
+
+La app puede mostrar acciones recomendadas segun la etapa del caso. Cuando el backend `sat-rag` esta disponible, estas acciones vienen de la API. Si no esta disponible, la app usa datos locales.
+
+Ejemplos de acciones:
+
+- pagar;
+- presentar descargo;
+- consultar expediente;
+- presentar apelacion;
+- regularizar deuda;
+- consultar orden de captura.
+
+### Consulta por voz
+
+La app incluye una consulta por voz con una experiencia similar a una nota de voz:
+
+- boton de microfono;
+- contador de tiempo;
+- onda dinamica que responde al volumen de entrada;
+- pausa;
+- cancelar con papelera;
+- enviar consulta;
+- transcripcion a texto.
+
+Esta funcionalidad usa `expo-speech-recognition`, por lo que necesita un development build o APK nativo. No funciona sobre Expo Go estandar.
+
+La transcripcion se usa para detectar intenciones basicas como descuento, pago o riesgo, y puede navegar hacia el caso detectado.
+
+### Drawer, perfil y canales
+
+El drawer fue simplificado para reducir ruido:
 
 - Papeleta Clara.
 - Perfil.
 - Canales oficiales SAT.
 - WhatSAT.
 
-WhatSAT abre el canal de WhatsApp del SAT para consultas oficiales.
+La seccion de perfil prepara el flujo para validacion de identidad, preferencias y seguridad. WhatSAT abre WhatsApp hacia el canal configurado para consultas externas.
 
-## Integración RAG Planeada
+### Alertas
 
-El proyecto incluye documentación en `rag.md` para conectar una base de conocimiento SAT/RAG ya procesada.
+La app tiene pantallas de alertas y configuracion de recordatorios. El objetivo es avisar al usuario sobre vencimientos, riesgos o cambios relevantes.
 
-La primera integración local con FastAPI ya está disponible. La app puede cargar casos,
-líneas de tiempo, opciones, checklist y canales desde el proyecto hermano `sat-rag`,
-con respaldo en los datos ficticios locales cuando la API está fuera de línea.
+### Deep links
 
-Consulta el flujo y las instrucciones conjuntas en `docs/flujo-end-to-end.md`.
+La app declara el esquema:
 
-La arquitectura propuesta separa dos tipos de información:
-
-### Datos Determinísticos
-
-Estos datos deben usarse para decisiones que no deben depender de un modelo generativo:
-
-- Plazos.
-- Descuentos.
-- Etapas.
-- Riesgos.
-- Canales oficiales.
-- Glosario.
-- Casos demo.
-- Códigos de infracción.
-
-### Corpus RAG
-
-El RAG se utilizaría para explicar información con fuentes, recuperar contexto normativo y redactar respuestas en lenguaje ciudadano.
-
-El endpoint conceptual principal es:
-
-```http
-POST /diagnostico-claro
+```text
+satapp://
 ```
 
-Ejemplo de payload:
+Existe una ruta para abrir una papeleta desde un enlace:
 
-```json
-{
-  "caseId": "demo-g11-plazo-inicial",
-  "userNarrativeTranscript": "Tengo la papeleta G11 y quiero saber si tengo descuento",
-  "queryDate": "2026-06-13"
-}
+```text
+satapp://papeleta/<id>
 ```
 
-La respuesta esperada debería alimentar una pantalla de diagnóstico con:
+La ruta redirige internamente al detalle del caso:
 
-- Resumen del caso.
-- Etapa detectada.
-- Riesgo.
-- Opciones disponibles.
-- Próximos pasos.
-- Canal oficial recomendado.
-- Fuentes consultadas.
-- Disclaimer.
+```text
+/caso/<id>
+```
 
-La información RAG es orientativa y debe incluir fuentes y advertencia. No reemplaza la revisión del expediente ni los canales oficiales del SAT.
+Esto deja preparada la app para un escenario futuro donde un mensaje de WhatsApp, SMS o una web externa pueda abrir directamente un caso en la app.
 
-## Privacidad
+## Relacion con sat-rag
 
-El prototipo está diseñado bajo un enfoque conservador:
+`satApp` consume informacion del proyecto hermano `sat-rag` cuando se configura:
 
-- No usa datos personales reales.
-- No almacena audios.
-- No almacena DNI, placas reales ni expedientes reales.
-- La voz se usa para transcribir la consulta en la app.
-- Cualquier integración futura con backend debe evitar enviar datos personales sin consentimiento.
+```bash
+EXPO_PUBLIC_SAT_API_URL=http://IP_DE_TU_PC:8000
+```
 
-## Stack Técnico
+La app usa dos hooks principales:
 
-- Expo SDK 54.
-- React Native 0.81.
-- React 19.
-- TypeScript.
-- Expo Router.
-- React Navigation Drawer.
-- `expo-speech-recognition`.
-- `expo-dev-client`.
-- EAS Build para APK preview y development builds.
+- `useCases`: carga `/cases` desde `sat-rag`; si falla, usa datos locales.
+- `useCaseJourney`: carga `/cases/:id`; si falla, usa una ruta local.
 
-## Estructura del Proyecto
+La API entrega:
+
+- casos;
+- etapa actual;
+- riesgo;
+- timeline;
+- opciones disponibles;
+- checklist;
+- canal oficial recomendado;
+- evidencia;
+- diagnostico claro.
+
+## Datos de prueba
+
+Con backend `sat-rag`, los casos principales son:
+
+| Placa | Codigo | Caso | Situacion |
+|---|---|---|---|
+| `DEM001` | `G11` | `demo-g11-descuento` | Plazo inicial, descuento disponible |
+| `DEM002` | `G27` | `demo-g27-plazo-proximo` | Plazo inicial proximo a vencer |
+| `DEM003` | `M03` | `demo-m03-sancion-firme` | Sancion firme, riesgo alto |
+| `DEM004` | `M42` | `demo-m42-riesgo-coactivo` | REC/coactiva, riesgo critico |
+
+En modo local, la app tambien acepta aliases para facilitar pruebas:
+
+| Dato | Resultado esperado |
+|---|---|
+| `DEM001` | Caso G11 |
+| `ABC123` o `ABC-123` | Caso G11 |
+| `G11` o `G11125456` | Caso G11 |
+| `45678901` | Casos asociados a ese DNI |
+| `SAT202` o `M20078901` | Caso M20 local |
+| `LIM046` o `G46654321` | Caso G46 local |
+
+## Estructura
 
 ```text
 app/
@@ -190,23 +213,40 @@ app/
       casos/
     perfil/
   alertas/
-  caso/
+  caso/[id]/
+  papeleta/[id].tsx
 
 src/
   features/
     alerts/
     cases/
-    info/
     profile/
     ruta-clara/
     voice/
-  navigation/
   shared/
+    api/
+    components/
+    data/
+    navigation/
+    styles/
+    types/
 ```
 
-La app usa rutas basadas en carpetas mediante Expo Router y separa pantallas por funcionalidades dentro de `src/features`.
+La navegacion usa Expo Router con rutas basadas en carpetas. La logica esta separada por funcionalidades dentro de `src/features`.
 
-## Desarrollo Local
+## Stack tecnico
+
+- Expo SDK 54.
+- React Native 0.81.
+- React 19.
+- TypeScript.
+- Expo Router.
+- React Navigation Drawer.
+- Expo Dev Client.
+- Expo Speech Recognition.
+- EAS Build.
+
+## Desarrollo local
 
 Instalar dependencias:
 
@@ -220,59 +260,75 @@ Verificar TypeScript:
 npm run typecheck
 ```
 
-Iniciar Metro para development build:
+Iniciar Metro para una app instalada como development build:
 
 ```bash
 npm run start:dev:tunnel -- --clear
 ```
 
-Este comando se usa con una app instalada como development build en el celular.
+En WSL2 y telefono fisico, el modo tunnel suele ser el mas estable. Si se usa `sat-rag`, la URL del API debe ser accesible desde el telefono; no usar `127.0.0.1` en el celular.
 
 ## Builds
 
-### Development Build
-
-Se usa para desarrollo diario sin reconstruir en cada cambio de interfaz:
+Development build para desarrollo:
 
 ```bash
 npx eas build --platform android --profile development
 ```
 
-Una vez instalado ese APK, los cambios de JS/TS/UI se prueban con Metro.
-
-### Preview APK
-
-Se usa para entregar una versión instalable:
+Preview APK para compartir:
 
 ```bash
 npx eas build --platform android --profile preview
 ```
 
-## Cuándo Requiere Nuevo Build
+Despues de instalar un development build, los cambios de JavaScript, TypeScript y estilos pueden probarse con Metro sin generar un APK nuevo.
 
-No se necesita nuevo build para cambios normales de interfaz, estilos o lógica JavaScript/TypeScript si se usa development build.
+Requieren nuevo build:
 
-Sí se necesita nuevo build cuando se cambia:
+- cambios en librerias nativas;
+- permisos;
+- plugins de Expo;
+- icono;
+- splash;
+- configuracion nativa de Android/iOS.
 
-- Una librería nativa.
-- Permisos en `app.json`.
-- Plugins de Expo.
-- Icono o splash.
-- Package name o configuración nativa.
-- Dependencias que requieren código nativo.
+## Variables de entorno
 
-## Estado del Prototipo
+Ejemplo:
 
-La app ya cuenta con:
+```bash
+EXPO_PUBLIC_SAT_API_URL=http://192.168.1.50:8000
+```
 
-- Navegación principal con tabs y drawer.
-- Pantallas de caso y alertas.
-- Perfil.
-- Consulta por voz funcional en APK nativo.
-- Onda dinámica basada en volumen real.
-- Configuración EAS.
-- Documentación RAG preparada para una futura integración.
+Si la variable no esta configurada o el API no responde, la app mantiene datos locales para que el flujo siga funcionando.
 
-## Advertencia
+## Privacidad y alcance
 
-Papeleta Clara es un prototipo informativo. Las respuestas, rutas y recomendaciones no constituyen asesoría legal definitiva. El usuario debe verificar su expediente y utilizar canales oficiales del SAT para confirmar información y realizar trámites.
+El prototipo no debe usar datos personales reales durante pruebas. Los casos actuales son datos de prueba para validar experiencia, navegacion y decisiones.
+
+La app no reemplaza los canales oficiales del SAT ni constituye asesoria legal. Su objetivo es ordenar informacion, mostrar rutas posibles y guiar al usuario hacia acciones verificables.
+
+## Estado actual y siguientes mejoras
+
+Ya existe:
+
+- consulta por placa, DNI y papeleta;
+- entrada guiada por caracteres;
+- busqueda con aliases;
+- detalle del caso;
+- calculo orientativo de descuentos;
+- voz con transcripcion;
+- rutas profundas;
+- integracion inicial con `sat-rag`;
+- fallback local sin backend;
+- drawer y perfil simplificados.
+
+Pendiente recomendado:
+
+- convertir Resultado en pantalla de decision inmediata;
+- mostrar acciones primarias por etapa sin obligar a entrar al detalle;
+- conectar botones de pago, expediente y canales oficiales con URLs finales verificadas;
+- validar reglas legales vigentes antes de produccion;
+- endurecer privacidad, consentimiento y manejo de datos reales;
+- mejorar persistencia de usuario y casos reales cuando exista integracion oficial.

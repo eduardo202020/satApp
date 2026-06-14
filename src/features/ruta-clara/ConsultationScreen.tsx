@@ -25,7 +25,7 @@ const inputs = [
       { choices: ['G', 'L', 'M'], kind: 'choice', length: 1 },
       { kind: 'number', length: 8 },
     ],
-    helper: 'Elige G, L o M y completa 8 digitos',
+    helper: 'Usa G11 o el codigo completo de 9 caracteres',
     icon: 'file-document-outline',
     id: 'ticket',
     label: 'Codigo de infraccion',
@@ -110,7 +110,7 @@ export default function ConsultationScreen() {
       </View>
 
       <View style={styles.actions}>
-        <PrimaryButton label="Buscar papeletas" disabled={!searchRequest} onPress={searchCase} />
+        <PrimaryButton label="Ver resultado" disabled={!searchRequest} onPress={searchCase} />
         <PrimaryButton label="No se que dato usar" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/voz')} />
       </View>
     </ScreenShell>
@@ -295,7 +295,7 @@ function getSearchRequest(values: Record<CaseSearchField, string>): CaseSearchRe
   const plate = normalizeSearchValue(values.plate);
   const document = normalizeSearchValue(values.document);
 
-  if (ticket.length === 9) {
+  if (isTicketSearchReady(ticket)) {
     return { field: 'ticket', input: ticket };
   }
 
@@ -308,6 +308,10 @@ function getSearchRequest(values: Record<CaseSearchField, string>): CaseSearchRe
   }
 
   return null;
+}
+
+function isTicketSearchReady(ticket: string) {
+  return /^[GLM][0-9]{2}$/.test(ticket) || /^[GLM][0-9]{8}$/.test(ticket);
 }
 
 function buildQueryParams(values: CaseSearchRequest) {

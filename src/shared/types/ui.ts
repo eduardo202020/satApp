@@ -18,6 +18,7 @@ export type CaseRecord = {
   ticketCode?: string;
   ticketNumber?: string;
   searchTicketNumber?: string;
+  searchAliases?: string[];
   documentNumber?: string;
   infraction: string;
   plate: string;

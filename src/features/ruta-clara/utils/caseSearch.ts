@@ -15,6 +15,12 @@ export function findCasesBySearch(cases: CaseRecord[], request: CaseSearchReques
   }
 
   return cases.filter((item) => {
+    const aliases = item.searchAliases?.map(normalizeSearchValue) ?? [];
+
+    if (aliases.includes(input)) {
+      return true;
+    }
+
     if (request.field === 'plate') {
       return normalizeSearchValue(item.plate) === input;
     }
