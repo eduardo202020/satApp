@@ -49,6 +49,7 @@ type ApiCase = {
   id: string;
   ticket_code: string;
   ticket_number: string;
+  document_number?: string;
   plate: string;
   amount: number | null;
   issue_date: string;
@@ -178,6 +179,8 @@ function mapCase(item: ApiCase): CaseRecord {
     id: item.id,
     ticketCode: item.ticket_code,
     ticketNumber: item.ticket_number,
+    searchTicketNumber: fallbackSearchTicketNumber(item),
+    documentNumber: item.document_number ?? fallbackDocumentNumber(item),
     infraction: item.infraction?.descripcion ?? 'Descripción pendiente de validación',
     plate: item.plate,
     amount: item.amount === null ? 'Monto por verificar' : `S/ ${item.amount.toFixed(2)}`,
@@ -194,6 +197,27 @@ function mapCase(item: ApiCase): CaseRecord {
     evidence: item.evidence?.map(mapEvidence) ?? [],
     latestSubmission: item.latest_submission ? mapSubmission(item.latest_submission) : null,
   };
+}
+
+function fallbackDocumentNumber(item: ApiCase) {
+  const code = item.ticket_code.toUpperCase();
+
+  if (code === 'G11' || code === 'G27') return '45678901';
+  if (code === 'M03') return '78901234';
+  if (code === 'M42') return '12345678';
+
+  return undefined;
+}
+
+function fallbackSearchTicketNumber(item: ApiCase) {
+  const code = item.ticket_code.toUpperCase();
+
+  if (code === 'G11') return 'G11125456';
+  if (code === 'G27') return 'G27123456';
+  if (code === 'M03') return 'M03000003';
+  if (code === 'M42') return 'M42000042';
+
+  return undefined;
 }
 
 function mapJourney(journey: ApiJourney) {

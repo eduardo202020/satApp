@@ -26,6 +26,7 @@ export function CaseCard({ item, compact = false }: CaseCardProps) {
 
       <View style={styles.detailRows}>
         <Detail label="Infraccion" value={item.infraction} />
+        <Detail label="Placa" value={item.plate} />
         <Detail label="Monto" value={item.amount} />
         <Detail label="Vence" value={item.dueDate} />
         <Detail label="Riesgo" value={item.risk} valueTone={riskTone} />

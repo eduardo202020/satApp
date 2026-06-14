@@ -12,6 +12,10 @@ import type {
 export const cases: CaseRecord[] = [
   {
     id: 'G11',
+    documentNumber: '45678901',
+    ticketCode: 'G11',
+    ticketNumber: 'G11125456',
+    searchTicketNumber: 'G11125456',
     infraction: 'Estacionar en zona rigida',
     plate: 'ABC-123',
     amount: 'S/ 440.00',
@@ -26,6 +30,10 @@ export const cases: CaseRecord[] = [
   },
   {
     id: 'M20',
+    documentNumber: '78901234',
+    ticketCode: 'M20',
+    ticketNumber: 'M20078901',
+    searchTicketNumber: 'M20078901',
     infraction: 'No respetar semaforo',
     plate: 'SAT-202',
     amount: 'S/ 2,575.00',
@@ -40,6 +48,10 @@ export const cases: CaseRecord[] = [
   },
   {
     id: 'G46',
+    documentNumber: '45678901',
+    ticketCode: 'G46',
+    ticketNumber: 'G46654321',
+    searchTicketNumber: 'G46654321',
     infraction: 'Exceso de velocidad',
     plate: 'LIM-046',
     amount: 'S/ 880.00',

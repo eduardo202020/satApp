@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '../styles/theme';
@@ -21,20 +21,30 @@ export function ScreenShell({
 }: ScreenShellProps) {
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
-      <ScrollView
-        style={styles.screen}
-        contentContainerStyle={[styles.screenContent, compact && styles.compactContent]}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 12 : 0}
+        style={styles.keyboardWrap}
       >
-        <View style={styles.hero}>
-          <View>
-            <Text style={styles.eyebrow}>{eyebrow}</Text>
-            <Text style={styles.title}>{title}</Text>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          style={styles.screen}
+          contentContainerStyle={[
+            styles.screenContent,
+            compact && styles.compactContent,
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.hero}>
+            <View>
+              <Text style={styles.eyebrow}>{eyebrow}</Text>
+              <Text style={styles.title}>{title}</Text>
+            </View>
+            <Text style={styles.description}>{description}</Text>
           </View>
-          <Text style={styles.description}>{description}</Text>
-        </View>
-        {children}
-      </ScrollView>
+          {children}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -45,6 +55,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   screen: {
+    flex: 1,
+  },
+  keyboardWrap: {
     flex: 1,
   },
   screenContent: {

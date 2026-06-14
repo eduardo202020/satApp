@@ -8,38 +8,52 @@ import { ScreenShell } from '../../shared/components/ScreenShell';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import { useCases } from '../cases/hooks/useCases';
+import { findCasesBySearch, searchFieldLabel, type CaseSearchField } from './utils/caseSearch';
 
 export default function ResultScreen() {
-  const { caseId, exact, input } = useLocalSearchParams<{
+  const { caseId, field, input } = useLocalSearchParams<{
     caseId?: string;
-    exact?: string;
+    field?: CaseSearchField;
     input?: string;
   }>();
   const { cases } = useCases();
-  const result = cases.find((item) => item.id === caseId) ?? cases[0];
-  const hasExactMatch = exact !== '0';
+  const queryInput = Array.isArray(input) ? input[0] : input;
+  const queryField = Array.isArray(field) ? field[0] : field;
+  const matches = queryField && queryInput
+    ? findCasesBySearch(cases, { field: queryField, input: queryInput })
+    : cases.filter((item) => item.id === caseId);
+  const hasMatches = matches.length > 0;
+  const resultCountLabel = matches.length === 1 ? '1 papeleta' : `${matches.length} papeletas`;
 
   return (
     <ScreenShell
       eyebrow="Resultado"
-      title={hasExactMatch ? 'Se encontro 1 papeleta' : 'No encontramos coincidencia exacta'}
+      title={hasMatches ? `Se encontro ${resultCountLabel}` : 'No encontramos papeletas'}
       description={
-        hasExactMatch
-          ? 'Revisa el estado, el monto y el siguiente paso recomendado.'
-          : 'Verifica los datos ingresados o intenta con placa y numero de papeleta.'
+        hasMatches
+          ? `Estas son las papeletas asociadas a ${searchFieldLabel(queryField)}.`
+          : 'Verifica los datos ingresados o intenta con placa, DNI o numero de papeleta.'
       }
     >
-      {hasExactMatch ? (
+      {hasMatches ? (
         <>
-          <View style={styles.cardWrap}>
-            <CaseCard item={result} compact />
+          <View style={styles.resultsList}>
+            {matches.map((item) => (
+              <View style={styles.cardWrap} key={item.id}>
+                <CaseCard item={item} compact />
+              </View>
+            ))}
           </View>
-          <View style={styles.summary}>
-            <Text style={styles.summaryTitle}>Siguiente paso recomendado</Text>
-            <Text style={styles.summaryText}>{result.nextStep}</Text>
-          </View>
+          {matches.length === 1 ? (
+            <View style={styles.summary}>
+              <Text style={styles.summaryTitle}>Siguiente paso recomendado</Text>
+              <Text style={styles.summaryText}>{matches[0].nextStep}</Text>
+            </View>
+          ) : null}
           <View style={styles.actions}>
-            <PrimaryButton label="Ver detalle del caso" onPress={() => navigateTo(`/caso/${result.id}`)} />
+            {matches.length === 1 ? (
+              <PrimaryButton label="Ver detalle del caso" onPress={() => navigateTo(`/caso/${matches[0].id}`)} />
+            ) : null}
             <PrimaryButton label="Nueva consulta" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')} />
           </View>
         </>
@@ -48,9 +62,9 @@ export default function ResultScreen() {
           <View style={styles.emptyCard}>
             <MaterialCommunityIcons name="file-search-outline" size={42} color={colors.blue} />
             <Text style={styles.emptyTitle}>Datos consultados</Text>
-            <Text style={styles.emptyValue}>{Array.isArray(input) ? input[0] : input || 'Sin dato ingresado'}</Text>
+            <Text style={styles.emptyValue}>{queryInput || 'Sin dato ingresado'}</Text>
             <Text style={styles.emptyText}>
-              No hay un caso asociado a ese dato en la informacion cargada. Revisa si la placa o papeleta estan bien escritas.
+              No hay papeletas asociadas a ese dato en la informacion cargada. Revisa si la placa, DNI o papeleta estan bien escritos.
             </Text>
           </View>
           <View style={styles.actions}>
@@ -64,8 +78,12 @@ export default function ResultScreen() {
 }
 
 const styles = StyleSheet.create({
-  cardWrap: {
+  resultsList: {
+    gap: 12,
     marginTop: 16,
+  },
+  cardWrap: {
+    marginTop: 0,
   },
   summary: {
     backgroundColor: colors.blueLight,
