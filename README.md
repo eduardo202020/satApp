@@ -1,186 +1,171 @@
-# Papeleta Clara - satApp
+# SatApp
 
-Aplicacion movil construida con Expo, React Native y TypeScript para ayudar a ciudadanos a consultar, entender y actuar frente a papeletas de transito vinculadas al SAT de Lima.
+Aplicacion movil construida con Expo, React Native y TypeScript para ayudar a ciudadanos a consultar, entender y gestionar papeletas de transito asociadas al SAT de Lima.
 
-La app busca convertir un proceso administrativo dificil de entender en una ruta simple:
+El objetivo del prototipo es convertir un proceso confuso en una ruta simple:
 
 ```text
-Consultar -> Entender -> Decidir -> Actuar -> Seguir
+Consultar -> Entender -> Revisar fechas -> Decidir -> Actuar -> Seguir
 ```
 
-El foco del prototipo es la claridad para usuarios no tecnicos, especialmente personas adultas que necesitan saber rapidamente si tienen una papeleta, que significa, si aplica descuento, que riesgo existe y cual es el siguiente paso.
+La app esta pensada para usuarios no tecnicos, incluyendo personas adultas y adultos mayores. Por eso prioriza textos cortos, botones grandes, navegacion visible, lectura por voz y flujos guiados.
 
-## Que hace actualmente
+## Estado actual
 
-### Consulta por placa, DNI o papeleta
+### Navegacion principal
 
-La pantalla de consulta permite buscar usando solo uno de estos datos:
+La navegacion inferior tiene tres accesos:
 
-- Placa del vehiculo.
-- Codigo de infraccion o numero de papeleta.
+- `Casos`: lista de papeletas asociadas o registradas.
+- `Inicio`: punto de partida para consultar, usar voz o abrir un flujo.
+- `Ayuda`: guia simple para aprender a usar la app.
+
+El drawer queda como acceso secundario para perfil, canales SAT y WhatSAT.
+
+### Consulta
+
+La consulta permite buscar usando solo uno de estos datos:
+
+- placa del vehiculo;
+- numero o codigo de papeleta;
 - DNI.
 
-Los campos estan segmentados por caracter para reducir errores de digitacion. La placa se llena como `ABC-123`, el DNI como 8 digitos y el codigo de infraccion permite escoger `G`, `L` o `M` y luego escribir numeros.
+Los campos se llenan por caracteres para reducir errores. La placa se guia como `ABC-123`, el DNI tiene 8 digitos y el codigo de papeleta permite escoger tipo `G`, `L` o `M` y luego ingresar numeros.
 
-Cada card de consulta tiene una lupa en la esquina superior derecha. Cuando el dato esta completo, tocar esa lupa ejecuta la busqueda de inmediato. Tambien se puede buscar presionando `realizar` desde el teclado, sin tener que bajar hasta un boton final.
+Si no hay papeletas asociadas al dato consultado, la app ofrece `Registrar papeleta` para casos donde el usuario ya tiene el documento fisico, pero el SAT aun no lo procesa.
 
-La busqueda normaliza los valores, ignora guiones y mayusculas/minusculas, y compara contra:
+### Registro manual de papeleta
 
-- placa;
-- DNI asociado;
-- codigo de infraccion;
-- numero de papeleta;
-- aliases de busqueda usados para pruebas.
+La pantalla `Registrar papeleta` permite:
 
-Si encuentra una o mas papeletas, navega a la pantalla de resultado.
+- ingresar placa, papeleta y DNI con los mismos inputs guiados de consulta;
+- seleccionar fecha desde calendario;
+- ingresar monto estimado;
+- adjuntar foto real de la papeleta desde la galeria;
+- crear un caso preliminar para seguimiento.
 
-### Resultado de consulta
-
-La pantalla de resultado muestra una lista de papeletas asociadas al dato ingresado. Cada card conserva informacion util para decidir si abrirla:
-
-- codigo e infraccion;
-- placa;
-- monto;
-- vencimiento o plazo;
-- riesgo;
-- estado general.
-
-Cada papeleta tiene una flecha grande en la esquina inferior derecha para entrar al detalle. La pantalla ya no muestra botones inferiores de "siguiente paso", "ver detalle" o "nueva consulta"; el objetivo es que el resultado sea limpio, escaneable y orientado a seleccionar una papeleta.
+El registro manual se mantiene en memoria durante la sesion del prototipo. Para una version productiva debe persistirse en almacenamiento local o backend.
 
 ### Detalle del caso
 
-Cada papeleta tiene una vista ordenada con:
+Cada papeleta tiene una pantalla de detalle con datos basicos:
 
-- numero y codigo de papeleta;
+- codigo y numero;
 - infraccion;
 - placa;
 - monto;
 - fecha de emision;
-- fecha de consulta;
-- plazo o vencimiento;
-- lugar;
 - estado;
 - riesgo;
-- descuento disponible o no;
-- siguiente paso.
+- siguiente paso sugerido.
 
-Desde esta pantalla se puede ir a:
+Desde el detalle se accede a cuatro pantallas con responsabilidades separadas:
 
-- revisar evidencia;
-- entender mi situacion;
-- linea de tiempo;
-- opciones y descuento.
+- `Revisar evidencia`: ver foto o evidencia.
+- `Entender mi situacion`: explicar por que se genero la papeleta.
+- `Linea de tiempo`: analizar descuentos por fechas y dias habiles.
+- `Opciones y descuento`: elegir que hacer.
 
-Estas entradas se muestran como cards con icono, descripcion corta y flecha, para que cada seccion tenga una funcion clara y no parezca una lista de botones repetidos.
+### Entender mi situacion
+
+Esta pantalla ya no repite pagos ni cronologias. Su funcion es explicar la papeleta en lenguaje ciudadano:
+
+- que significa la infraccion;
+- por que pudo haberse generado;
+- que datos revisar antes de decidir;
+- codigo, placa e infraccion del caso.
+
+Incluye un boton `Escuchar explicacion` usando `expo-speech`, para que el usuario pueda oir la orientacion en voz alta.
+
+Si `sat-rag` esta disponible, puede complementar con una explicacion desde `POST /diagnostico-claro`. Si no responde, la pantalla sigue funcionando con una guia local.
+
+### Linea de tiempo
+
+La pantalla `Linea de tiempo` se centra en fechas y descuentos. Muestra:
+
+- fecha de emision;
+- fecha de consulta;
+- dias habiles transcurridos;
+- calendario mensual con colores;
+- tramo de 83%;
+- tramo de 67%;
+- fines de semana marcados como dias no habiles;
+- boton/card para pagar con beneficio cuando corresponde.
+
+Esta pantalla evita repetir acciones o explicaciones largas. Su objetivo es que el usuario entienda visualmente los plazos.
+
+### Opciones y descuento
+
+La pantalla `Opciones y descuento` muestra lo necesario para decidir:
+
+- si hay beneficio vigente;
+- monto base;
+- ahorro estimado;
+- monto estimado a pagar;
+- acciones disponibles.
+
+El pago ya no abre un navegador. Ahora navega a un flujo interno de pago.
+
+### Flujo de pago
+
+La ruta `/caso/[id]/pago` simula gestion de pago dentro de la app:
+
+- seleccion de metodo de pago;
+- Yape como metodo funcional del prototipo;
+- ingreso de numero de celular;
+- ingreso de codigo de aprobacion;
+- loading de procesamiento;
+- pantalla de exito con numero de orden y total.
+
+Los otros metodos aparecen deshabilitados para mostrar enfoque futuro.
+
+### Preparar descargo
+
+La pantalla `Preparar descargo` permite:
+
+- marcar checklist obligatorio;
+- escribir explicacion del usuario;
+- adjuntar sustento real con `expo-document-picker`;
+- subir multiples archivos;
+- aceptar fotos, PDF y documentos;
+- quitar adjuntos antes de registrar.
+
+El backend simula la constancia cuando se envia la accion.
 
 ### Evidencia
 
-La pantalla de evidencia muestra la fotopapeleta de prueba asociada al caso. Por ahora todos los casos demo usan el mismo asset local:
+La pantalla de evidencia muestra la fotopapeleta de prueba asociada al caso. Permite revisar la imagen con zoom y desplazamiento. Por ahora usa un asset local de demostracion:
 
 ```text
 assets/evidence/papeleta.gif
 ```
 
-La imagen se puede pellizcar para hacer zoom y arrastrar para revisar detalles. El objetivo es cubrir el insight del desafio: antes de pagar o reclamar, el ciudadano necesita ver la foto o evidencia y entender que ocurrio.
+### Ayuda inclusiva
 
-La pantalla mantiene informacion basica de la evidencia, lugar, fecha y un boton `Regresar` que vuelve al detalle del caso.
+El tab `Ayuda` explica:
 
-### Entender mi situacion
+- para que sirve cada tab;
+- flujo recomendado de uso;
+- consulta;
+- entendimiento de la infraccion;
+- linea de tiempo;
+- pago o descargo.
 
-`Entender mi situacion` esta pensada para usuarios no tecnicos, especialmente personas que necesitan una explicacion simple antes de decidir.
-
-Muestra:
-
-- "Tu caso, en simple": etapa actual, papeleta, placa, monto y riesgo.
-- "Lo que esta pasando": traduccion ciudadana de la papeleta, codigo, hecho registrado y etapa.
-- "Fechas y descuento": dias calendario, dias habiles, descuento del 83%, descuento menor del 67%, monto estimado y ahorro.
-- "Que puede pasar si no haces nada": riesgos concretos como perder descuento, Resolucion de Sancion, cobranza coactiva, captura vehicular o retencion bancaria.
-- "Que puedes hacer ahora": acciones explicadas en lenguaje simple.
-- "De donde sale esta explicacion": fuentes del RAG y reglas usadas.
-
-Consume `POST /diagnostico-claro` desde `sat-rag`. Si el backend no responde, usa resumen local para mantener la navegacion.
-
-### Linea de tiempo
-
-La linea de tiempo muestra la ruta PAS/PEC del procedimiento:
-
-```text
-PIT emitida -> PAS -> Resolucion de Sancion -> Sancion firme -> PEC -> Medidas cautelares
-```
-
-Su funcion no es repetir los descuentos, sino ubicar al ciudadano en la ruta del caso y mostrar que podria pasar despues si no actua.
-
-### Descuentos
-
-La app calcula una orientacion de descuento usando fecha de emision, fecha de consulta, codigo de infraccion y reglas cargadas en el proyecto.
-
-Reglas consideradas:
-
-- 83% de descuento dentro de los primeros 5 dias habiles cuando el codigo no esta excluido.
-- 67% de descuento desde el sexto dia habil hasta antes de la Resolucion de Sancion, cuando corresponde.
-- Codigos `M` excluidos segun las reglas extraidas del conocimiento SAT/RAG.
-
-La pantalla de opciones muestra:
-
-- monto base;
-- ahorro estimado;
-- monto a pagar;
-- dias habiles transcurridos;
-- cronologia de descuentos.
-
-En la cronologia de descuentos se sombrea el tramo vigente y aparece el pill `Estado actual`, para reconocer rapidamente si el caso esta en el 83%, en el 67% o fuera del beneficio.
-
-Las opciones se muestran como cards accionables:
-
-- `Pagar con % de descuento` abre `https://www.sat.gob.pe/pagosenlinea/`.
-- `Presentar descargo` lleva al flujo interno de preparacion de tramite.
-- `Ver mas opciones` lleva al checklist del caso.
-
-Este calculo es informativo y debe contrastarse con el expediente y canales oficiales.
-
-### Opciones por etapa
-
-La app puede mostrar acciones recomendadas segun la etapa del caso. Cuando el backend `sat-rag` esta disponible, estas acciones vienen de la API. Si no esta disponible, la app usa datos locales.
-
-Ejemplos de acciones:
-
-- pagar;
-- presentar descargo;
-- consultar expediente;
-- presentar apelacion;
-- regularizar deuda;
-- consultar orden de captura.
+Incluye `Escuchar guia` con `expo-speech`, pensado para usuarios que prefieren audio o tienen dificultad leyendo textos largos.
 
 ### Consulta por voz
 
-La app incluye una consulta por voz con una experiencia similar a una nota de voz:
+La consulta por voz usa `expo-speech-recognition` con una experiencia similar a una nota de voz:
 
-- boton de microfono;
-- contador de tiempo;
-- onda dinamica que responde al volumen de entrada;
-- pausa;
-- cancelar con papelera;
-- enviar consulta;
-- transcripcion a texto.
+- microfono;
+- contador;
+- onda dinamica;
+- pausar;
+- cancelar;
+- enviar;
+- transcripcion.
 
-Esta funcionalidad usa `expo-speech-recognition`, por lo que necesita un development build o APK nativo. No funciona sobre Expo Go estandar.
-
-La transcripcion se usa para detectar intenciones basicas como descuento, pago o riesgo, y puede navegar hacia el caso detectado.
-
-### Drawer, perfil y canales
-
-El drawer fue simplificado para reducir ruido:
-
-- Papeleta Clara.
-- Perfil.
-- Canales oficiales SAT.
-- WhatSAT.
-
-La seccion de perfil prepara el flujo para validacion de identidad, preferencias y seguridad. WhatSAT abre WhatsApp hacia el canal configurado para consultas externas.
-
-### Alertas
-
-La app tiene pantallas de alertas y configuracion de recordatorios. El objetivo es avisar al usuario sobre vencimientos, riesgos o cambios relevantes.
+La transcripcion se usa para detectar intenciones basicas y navegar hacia el flujo adecuado.
 
 ### Deep links
 
@@ -190,71 +175,61 @@ La app declara el esquema:
 satapp://
 ```
 
-Existe una ruta para abrir una papeleta desde un enlace:
+Existe una ruta para abrir una papeleta desde enlace externo:
 
 ```text
 satapp://papeleta/<id>
 ```
 
-La ruta redirige internamente al detalle del caso:
+Internamente redirige a:
 
 ```text
 /caso/<id>
 ```
 
-Esto deja preparada la app para un escenario futuro donde un mensaje de WhatsApp, SMS o una web externa pueda abrir directamente un caso en la app.
+Esto deja preparada una integracion futura con WhatsApp, SMS o una web externa.
 
 ## Relacion con sat-rag
 
-`satApp` consume informacion del proyecto hermano `sat-rag` cuando se configura:
+La app puede consumir el backend `sat-rag` mediante:
 
 ```bash
 EXPO_PUBLIC_SAT_API_URL=http://IP_DE_TU_PC:8000
 ```
 
-La app usa dos hooks principales:
+Importante: en un telefono fisico no usar `127.0.0.1`, porque apunta al propio telefono. Usa la IP LAN de la PC/WSL o una URL publica.
 
-- `useCases`: carga `/cases` desde `sat-rag`; si falla, usa datos locales.
-- `useCaseJourney`: carga `/cases/:id`; si falla, usa una ruta local.
+La app consume principalmente:
 
-La API entrega:
+- `GET /cases`
+- `GET /cases/{case_id}`
+- `GET /cases/{case_id}/tracking`
+- `POST /cases/{case_id}/actions`
+- `POST /diagnostico-claro`
 
-- casos;
-- etapa actual;
-- riesgo;
-- timeline;
-- opciones disponibles;
-- checklist;
-- canal oficial recomendado;
-- evidencia;
-- explicacion para "Entender mi situacion".
+Si el backend no esta disponible, la app conserva datos locales para que la demo siga navegable.
 
-## Datos de prueba
+## Datos de prueba locales
 
-Con backend `sat-rag`, los casos principales son:
-
-| Placa | Codigo | Caso | Situacion |
-|---|---|---|---|
-| `DEM001` | `G11` | `demo-g11-descuento` | Emitida ayer, descuento del 83% |
-| `DEM002` | `G27` | `demo-g27-plazo-proximo` | Emitida hace 5 dias, plazo inicial |
-| `DEM003` | `M03` | `demo-m03-sancion-firme` | Emitida hace 10 dias, sancion firme |
-| `DEM005` | `G27` | `demo-g27-segunda-ventana` | Emitida hace 10 dias, descuento menor del 67% |
-| `DEM004` | `M42` | `demo-m42-riesgo-coactivo` | Emitida hace 10 dias, REC/coactiva |
-
-En modo local, la app tambien acepta aliases para facilitar pruebas:
+Casos locales utiles:
 
 | Dato | Resultado esperado |
 |---|---|
-| `DEM001` | Caso G11 |
-| `DEM002` | Caso G27 inicial |
-| `DEM003` | Caso M03 |
-| `DEM004` | Caso M42 |
-| `DEM005` | Caso G27 con descuento menor |
 | `ABC123` o `ABC-123` | Caso G11 |
 | `G11` o `G11125456` | Caso G11 |
 | `45678901` | Casos asociados a ese DNI |
-| `SAT202` o `M20078901` | Caso M20 local |
-| `LIM046` o `G46654321` | Caso G46 local |
+| `SAT202` o `M20078901` | Caso M20 |
+| `LIM046` o `G46654321` | Caso G46 |
+
+Datos del backend `sat-rag`:
+
+| Placa | Codigo | Caso |
+|---|---|---|
+| `DEM001` | `G11` | `demo-g11-descuento` |
+| `DEM002` | `G27` | `demo-g27-plazo-proximo` |
+| `DEM003` | `M03` | `demo-m03-sancion-firme` |
+| `DEM005` | `G27` | `demo-g27-segunda-ventana` |
+| `DEM004` | `M42` | `demo-m42-riesgo-coactivo` |
 
 ## Estructura
 
@@ -262,8 +237,9 @@ En modo local, la app tambien acepta aliases para facilitar pruebas:
 app/
   (drawer)/
     (tabs)/
-      inicio/
       casos/
+      inicio/
+      ayuda/
     perfil/
   alertas/
   caso/[id]/
@@ -273,6 +249,7 @@ src/
   features/
     alerts/
     cases/
+    help/
     profile/
     ruta-clara/
     voice/
@@ -280,12 +257,11 @@ src/
     api/
     components/
     data/
+    hooks/
     navigation/
     styles/
     types/
 ```
-
-La navegacion usa Expo Router con rutas basadas en carpetas. La logica esta separada por funcionalidades dentro de `src/features`.
 
 ## Stack tecnico
 
@@ -296,8 +272,12 @@ La navegacion usa Expo Router con rutas basadas en carpetas. La logica esta sepa
 - Expo Router.
 - React Navigation Drawer.
 - Expo Dev Client.
-- Expo Speech Recognition.
 - EAS Build.
+- `expo-speech-recognition` para consulta por voz.
+- `expo-speech` para lectura en voz alta.
+- `expo-image-picker` para foto de papeleta.
+- `expo-document-picker` para sustento de descargo.
+- `expo-splash-screen` para splash/icono.
 
 ## Desarrollo local
 
@@ -313,84 +293,51 @@ Verificar TypeScript:
 npm run typecheck
 ```
 
-Iniciar Metro para una app instalada como development build:
+Iniciar Metro para development build:
 
 ```bash
 npm run start:dev:tunnel -- --clear
 ```
 
-En WSL2 y telefono fisico, el modo tunnel suele ser el mas estable. Si se usa `sat-rag`, la URL del API debe ser accesible desde el telefono; no usar `127.0.0.1` en el celular.
+En WSL2 con telefono fisico, el modo tunnel suele ser el mas estable.
 
 ## Builds
 
-Development build para desarrollo:
+APK con development client para seguir desarrollando:
 
 ```bash
 npx eas build --platform android --profile development
 ```
 
-Preview APK para compartir:
+APK preview para compartir:
 
 ```bash
 npx eas build --platform android --profile preview
 ```
 
-Despues de instalar un development build, los cambios de JavaScript, TypeScript y estilos pueden probarse con Metro sin generar un APK nuevo.
+Despues de instalar un development build, los cambios JS/TS/estilos pueden verse con Metro sin generar otro APK.
 
 Requieren nuevo build:
 
-- cambios en librerias nativas;
+- nuevas librerias nativas;
 - permisos;
-- plugins de Expo;
+- plugins Expo;
 - icono;
 - splash;
-- configuracion nativa de Android/iOS.
-
-## Variables de entorno
-
-Ejemplo:
-
-```bash
-EXPO_PUBLIC_SAT_API_URL=http://192.168.1.50:8000
-```
-
-Si la variable no esta configurada o el API no responde, la app mantiene datos locales para que el flujo siga funcionando.
+- configuracion Android/iOS.
 
 ## Privacidad y alcance
 
-El prototipo no debe usar datos personales reales durante pruebas. Los casos actuales son datos de prueba para validar experiencia, navegacion y decisiones.
+El prototipo usa datos ficticios. No debe usarse con datos personales reales sin consentimiento, controles de seguridad y validacion legal.
 
-La app no reemplaza los canales oficiales del SAT ni constituye asesoria legal. Su objetivo es ordenar informacion, mostrar rutas posibles y guiar al usuario hacia acciones verificables.
+La app no reemplaza canales oficiales del SAT ni constituye asesoria legal. Su objetivo es orientar, ordenar informacion y ayudar a decidir el siguiente paso.
 
-## Estado actual y siguientes mejoras
+## Siguientes mejoras recomendadas
 
-Ya existe:
-
-- consulta por placa, DNI y papeleta;
-- entrada guiada por caracteres;
-- lupa accionable por card de consulta;
-- busqueda con `realizar` desde el teclado;
-- busqueda con aliases;
-- resultado como lista de papeletas con flecha a detalle;
-- detalle del caso;
-- evidencia con fotopapeleta, pinch zoom y arrastre;
-- entender mi situacion con explicacion ciudadana desde `sat-rag`;
-- linea de tiempo PAS/PEC;
-- calculo orientativo de descuentos;
-- cronologia de descuentos con `Estado actual`;
-- opciones accionables para pago, descargo y checklist;
-- voz con transcripcion;
-- rutas profundas;
-- integracion inicial con `sat-rag`;
-- fallback local sin backend;
-- drawer y perfil simplificados.
-
-Pendiente recomendado:
-
-- hacer interactivo el checklist y guardar avances del usuario;
-- simular pago, apelacion y regularizacion ademas del descargo;
-- conectar expediente y canales oficiales con URLs finales verificadas;
-- generar alertas locales desde reglas de plazo;
-- validar reglas legales vigentes antes de produccion;
-- endurecer privacidad, consentimiento y manejo de datos reales;
-- mejorar persistencia de usuario y casos reales cuando exista integracion oficial.
+- Persistir registros manuales y preferencias.
+- Mejorar autenticacion/perfil.
+- Conectar pagos reales solo con proveedor autorizado.
+- Agregar recordatorios locales por fecha.
+- Integrar feriados para computo de dias habiles.
+- Robustecer privacidad antes de usar datos reales.
+- Convertir la ayuda en onboarding/tour guiado si el alcance lo permite.
