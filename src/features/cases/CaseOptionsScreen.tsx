@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { colors } from '../../shared/styles/theme';
@@ -9,8 +9,6 @@ import { navigateTo } from '../../shared/navigation/routes';
 import { useCases } from './hooks/useCases';
 import { useCaseJourney } from './hooks/useCaseJourney';
 import { analyzeCaseDiscount, formatSoles } from './utils/discounts';
-
-const SAT_PAYMENT_URL = 'https://www.sat.gob.pe/pagosenlinea/';
 
 export default function CaseOptionsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,15 +24,15 @@ export default function CaseOptionsScreen() {
     if (discount.rule) {
       return {
         ...option,
-        description: `Monto estimado: ${formatSoles(discount.payableAmount)} de ${formatSoles(discount.baseAmount)}.`,
-        title: `Pagar con ${discount.rule.percentage}% de descuento`,
+        description: `Puedes pagar un monto estimado de ${formatSoles(discount.payableAmount)}.`,
+        title: `Pagar con beneficio`,
       };
     }
 
     return {
       ...option,
-      description: discount.reason,
-      title: 'Pagar monto sin descuento vigente',
+      description: 'Puedes revisar el monto y elegir el siguiente paso.',
+      title: 'Ver pago disponible',
       tone: 'attention' as const,
     };
   });
@@ -42,15 +40,15 @@ export default function CaseOptionsScreen() {
   return (
     <ScreenShell
       eyebrow="Opciones"
-      title="Que puedes hacer ahora?"
-      description={`Segun el estado de ${item.ticketCode ?? item.id}, estas son las acciones recomendadas.`}
+      title="Qué puedes hacer"
+      description="Elige una acción según lo que quieres hacer con tu papeleta."
       compact
     >
       <View style={styles.discountCard}>
         <View style={styles.discountHeader}>
           <View>
-            <Text style={styles.kicker}>Descuento segun consulta</Text>
-            <Text style={styles.discountTitle}>{discount.summary}</Text>
+            <Text style={styles.kicker}>Beneficio disponible</Text>
+            <Text style={styles.discountTitle}>{discount.rule ? 'Tienes descuento vigente' : 'Sin descuento vigente'}</Text>
           </View>
           <View style={[styles.badge, discount.rule ? styles.badgeSafe : styles.badgeAttention]}>
             <Text style={[styles.badgeText, discount.rule ? styles.badgeTextSafe : styles.badgeTextAttention]}>
@@ -59,53 +57,17 @@ export default function CaseOptionsScreen() {
           </View>
         </View>
 
-        <Text style={styles.discountReason}>{discount.reason}</Text>
+        <Text style={styles.discountReason}>
+          {discount.rule
+            ? 'Si decides pagar ahora, este es el estimado calculado con la fecha de la papeleta.'
+            : 'Puedes continuar con pago regular o revisar si corresponde presentar un descargo.'}
+        </Text>
 
         <View style={styles.amountGrid}>
           <AmountItem label="Monto base" value={formatSoles(discount.baseAmount)} />
           <AmountItem label="Ahorro" value={discount.rule ? formatSoles(discount.discountAmount) : 'S/ 0.00'} />
           <AmountItem label="Monto a pagar" value={formatSoles(discount.payableAmount)} highlight />
         </View>
-
-        <View style={styles.metaGrid}>
-          <MetaItem label="Emision" value={discount.issueDateLabel} />
-          <MetaItem label="Consulta" value={discount.queryDateLabel} />
-          <MetaItem
-            label="Dias habiles"
-            value={discount.businessDaysElapsed === null ? 'Por validar' : `${discount.businessDaysElapsed}`}
-          />
-        </View>
-      </View>
-
-      <View style={styles.timelineCard}>
-        <Text style={styles.sectionTitle}>Cronologia de descuentos</Text>
-        {discount.timeline.map((step) => (
-          <View
-            style={[
-              styles.timelineStep,
-              step.isCurrent && styles.timelineStepCurrent,
-              step.isCurrent && {
-                backgroundColor: stepCurrentBackground[step.state],
-                borderColor: stepStateColor[step.state],
-              },
-            ]}
-            key={`${step.title}-${step.date}`}
-          >
-            <View style={[styles.timelineDot, { backgroundColor: stepStateColor[step.state] }]} />
-            <View style={styles.timelineText}>
-              <View style={styles.timelineHeader}>
-                <Text style={styles.timelineDate}>{step.date}</Text>
-                {step.isCurrent && (
-                  <View style={styles.currentPill}>
-                    <Text style={styles.currentPillText}>Estado actual</Text>
-                  </View>
-                )}
-              </View>
-              <Text style={styles.timelineTitle}>{step.title}</Text>
-              <Text style={styles.timelineDescription}>{step.description}</Text>
-            </View>
-          </View>
-        ))}
       </View>
 
       <View style={styles.list}>
@@ -177,7 +139,7 @@ function getOptionTarget(option: { action?: string; title: string }): OptionTarg
 
 function handleOptionPress(target: OptionTarget, caseId: string) {
   if (target === 'payment') {
-    void Linking.openURL(SAT_PAYMENT_URL);
+    navigateTo(`/caso/${caseId}/pago`);
     return;
   }
 
@@ -204,29 +166,6 @@ function AmountItem({ highlight, label, value }: { highlight?: boolean; label: s
     </View>
   );
 }
-
-function MetaItem({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.metaItem}>
-      <Text style={styles.metaLabel}>{label}</Text>
-      <Text style={styles.metaValue}>{value}</Text>
-    </View>
-  );
-}
-
-const stepStateColor = {
-  attention: colors.amber,
-  pending: '#B6C1D2',
-  risk: colors.red,
-  safe: colors.green,
-};
-
-const stepCurrentBackground = {
-  attention: colors.amberLight,
-  pending: colors.blueLight,
-  risk: colors.redLight,
-  safe: colors.greenLight,
-};
 
 const styles = StyleSheet.create({
   amountGrid: {
@@ -309,18 +248,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     marginTop: 3,
   },
-  currentPill: {
-    backgroundColor: colors.navy,
-    borderRadius: 999,
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-  },
-  currentPillText: {
-    color: colors.cream,
-    fontSize: 10,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-  },
   kicker: {
     color: colors.blue,
     fontSize: 11,
@@ -330,29 +257,6 @@ const styles = StyleSheet.create({
   list: {
     gap: 12,
     marginTop: 16,
-  },
-  metaGrid: {
-    borderTopColor: colors.line,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 14,
-    paddingTop: 12,
-  },
-  metaItem: {
-    flex: 1,
-  },
-  metaLabel: {
-    color: colors.muted,
-    fontSize: 10,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-  },
-  metaValue: {
-    color: colors.ink,
-    fontSize: 12,
-    fontWeight: '900',
-    marginTop: 4,
   },
   option: {
     alignItems: 'center',
@@ -386,68 +290,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 18,
     marginTop: 4,
-  },
-  sectionTitle: {
-    color: colors.ink,
-    fontSize: 16,
-    fontWeight: '900',
-    marginBottom: 12,
-  },
-  timelineCard: {
-    backgroundColor: colors.card,
-    borderColor: colors.line,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginTop: 14,
-    padding: 16,
-  },
-  timelineDate: {
-    color: colors.blue,
-    flexShrink: 1,
-    fontSize: 11,
-    fontWeight: '900',
-  },
-  timelineDescription: {
-    color: colors.muted,
-    fontSize: 12,
-    fontWeight: '700',
-    lineHeight: 17,
-    marginTop: 3,
-  },
-  timelineDot: {
-    borderRadius: 7,
-    height: 14,
-    marginTop: 5,
-    width: 14,
-  },
-  timelineHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'space-between',
-  },
-  timelineStep: {
-    borderColor: 'transparent',
-    borderRadius: 8,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 8,
-    padding: 10,
-  },
-  timelineStepCurrent: {
-    shadowColor: colors.navy,
-    shadowOffset: { height: 3, width: 0 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-  },
-  timelineText: {
-    flex: 1,
-  },
-  timelineTitle: {
-    color: colors.ink,
-    fontSize: 14,
-    fontWeight: '900',
-    marginTop: 2,
   },
 });

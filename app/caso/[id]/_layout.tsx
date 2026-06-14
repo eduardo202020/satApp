@@ -8,6 +8,7 @@ export default function CaseStackLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.navy },
         headerTintColor: colors.cream,
+        headerTitleAlign: 'center',
         headerTitleStyle: {
           color: colors.cream,
           fontSize: 17,
@@ -22,6 +23,7 @@ export default function CaseStackLayout() {
       <Stack.Screen name="canal-oficial" options={{ title: 'Canal oficial SAT' }} />
       <Stack.Screen name="evidencia" options={{ title: 'Evidencia' }} />
       <Stack.Screen name="diagnostico" options={{ title: 'Entender mi situación' }} />
+      <Stack.Screen name="pago" options={{ title: 'Pago' }} />
       <Stack.Screen name="tramite" options={{ title: 'Preparar descargo' }} />
       <Stack.Screen name="constancia" options={{ title: 'Constancia' }} />
       <Stack.Screen name="seguimiento" options={{ title: 'Seguimiento' }} />

@@ -19,6 +19,7 @@ export default function DrawerLayout() {
         headerShadowVisible: false,
         headerStyle: drawerStyles.header,
         headerTintColor: colors.cream,
+        headerTitleAlign: 'center',
         headerTitleStyle: drawerStyles.headerTitle,
         overlayColor: 'rgba(22, 33, 28, 0.38)',
         sceneStyle: drawerStyles.scene,

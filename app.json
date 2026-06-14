@@ -54,11 +54,12 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#062A78",
-          "image": "./assets/splash-icon.png",
+          "image": "./assets/icon.png",
           "imageWidth": 300,
           "resizeMode": "contain"
         }
       ],
+      "expo-document-picker",
       "expo-font"
     ],
     "experiments": {

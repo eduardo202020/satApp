@@ -11,6 +11,7 @@ export default function ProfileStackLayout() {
         headerShadowVisible: false,
         headerRight: () => <HeaderAlertButton />,
         headerTintColor: colors.cream,
+        headerTitleAlign: 'center',
         headerTitleStyle: {
           color: colors.cream,
           fontSize: 17,

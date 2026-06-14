@@ -8,6 +8,7 @@ export default function AlertsStackLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.navy },
         headerTintColor: colors.cream,
+        headerTitleAlign: 'center',
         headerTitleStyle: {
           color: colors.cream,
           fontSize: 17,
