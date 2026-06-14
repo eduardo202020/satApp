@@ -63,7 +63,8 @@
       "expo-font"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/satApp"
     },
     "extra": {
       "router": {},

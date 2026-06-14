@@ -40,6 +40,8 @@
     "android:localhost": "expo start --android --localhost",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "export:web": "expo export --platform web",
+    "export:web:pages": "expo export --platform web --clear && node scripts/prepare-github-pages.js",
     "typecheck": "tsc --noEmit"
   },
   "private": true,

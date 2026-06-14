@@ -5,7 +5,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![EAS Build](https://img.shields.io/badge/EAS-Build-4630EB?style=for-the-badge&logo=expo&logoColor=white)
 
-**SatApp** es una aplicación móvil construida con **Expo + React Native + TypeScript** para ayudar a ciudadanos a consultar, entender y gestionar papeletas de tránsito asociadas al SAT de Lima.
+**SatApp** es una aplicación móvil y web construida con **Expo + React Native + TypeScript** para ayudar a ciudadanos a consultar, entender y gestionar papeletas de tránsito asociadas al SAT de Lima.
 
 La idea central es simple:
 
@@ -24,6 +24,7 @@ El prototipo está pensado para personas no técnicas, especialmente usuarios de
 | Recurso | Link |
 |---|---|
 | 🎥 Video demo en YouTube | [Ver presentación de SatApp](https://youtu.be/REEMPLAZAR_VIDEO_DEMO) |
+| 🌐 Demo web | [Abrir SatApp Web](https://example.com/satapp-web) |
 | 📦 APK para instalar | [Descargar APK desde Google Drive](https://drive.google.com/file/d/REEMPLAZAR_ID_DEL_APK/view?usp=sharing) |
 | 🧠 Backend RAG | [`eduardo202020/sat-rag`](https://github.com/eduardo202020/sat-rag) |
 
@@ -271,6 +272,7 @@ docs/
 - React 19.
 - TypeScript.
 - Expo Router.
+- Expo Web con export estático para publicar como sitio web.
 - React Navigation Drawer.
 - Expo Dev Client.
 - EAS Build.
@@ -304,6 +306,12 @@ npm run start:dev:tunnel -- --clear
 
 En WSL2 con teléfono físico, el modo tunnel suele ser el más estable.
 
+Iniciar la versión web en desarrollo:
+
+```bash
+npm run web
+```
+
 ---
 
 ## 📦 Builds
@@ -330,6 +338,23 @@ Requieren nuevo build:
 - icono;
 - splash;
 - configuración Android/iOS.
+
+Web estática para GitHub Pages:
+
+```bash
+npm run export:web:pages
+```
+
+El comando genera `dist/` con:
+
+- el favicon de la app;
+- rutas preparadas para `/satApp`;
+- `404.html` para que las rutas internas funcionen al recargar;
+- `.nojekyll` para que GitHub Pages publique correctamente la carpeta `_expo`.
+
+La web puede publicarse en GitHub Pages como sitio estático. Si se despliega en otra ruta, actualiza `experiments.baseUrl` en `app.json`. Si necesita datos reales del backend, `sat-rag` debe estar publicado aparte y la URL debe configurarse con `EXPO_PUBLIC_SAT_API_URL` antes del export.
+
+El repositorio incluye el workflow `.github/workflows/deploy-pages.yml`, que publica la web en GitHub Pages cada vez que se hace push a `master`.
 
 ---
 

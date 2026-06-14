@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSegments } from 'expo-router';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useResponsiveLayout } from '../shared/hooks/useResponsiveLayout';
 import { navigateTo } from '../shared/navigation/routes';
@@ -48,7 +48,19 @@ export function AppHeaderNavigation() {
   return (
     <View style={[styles.wrap, { width: headerWidth }]}>
       <View style={styles.side}>
-        <Text style={styles.brand}>SatApp</Text>
+        <Pressable
+          accessibilityLabel="Ir al inicio de SatApp"
+          accessibilityRole="link"
+          onPress={() => navigateTo('/(drawer)/(tabs)/inicio')}
+          style={styles.brandLink}
+        >
+          <Image
+            source={require('../../assets/icon.png')}
+            resizeMode="contain"
+            style={styles.brandIcon}
+          />
+          <Text style={styles.brand}>SatApp</Text>
+        </Pressable>
       </View>
 
       <View style={styles.nav}>
@@ -137,6 +149,18 @@ const styles = StyleSheet.create({
     color: colors.cream,
     fontSize: 17,
     fontWeight: '900',
+  },
+  brandIcon: {
+    borderRadius: 10,
+    height: 36,
+    width: 36,
+  },
+  brandLink: {
+    alignItems: 'center',
+    borderRadius: 999,
+    flexDirection: 'row',
+    gap: 10,
+    paddingRight: 12,
   },
   nav: {
     alignItems: 'center',
