@@ -44,18 +44,6 @@ export default function ResultScreen() {
               </View>
             ))}
           </View>
-          {matches.length === 1 ? (
-            <View style={styles.summary}>
-              <Text style={styles.summaryTitle}>Siguiente paso recomendado</Text>
-              <Text style={styles.summaryText}>{matches[0].nextStep}</Text>
-            </View>
-          ) : null}
-          <View style={styles.actions}>
-            {matches.length === 1 ? (
-              <PrimaryButton label="Ver detalle del caso" onPress={() => navigateTo(`/caso/${matches[0].id}`)} />
-            ) : null}
-            <PrimaryButton label="Nueva consulta" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')} />
-          </View>
         </>
       ) : (
         <>
@@ -84,24 +72,6 @@ const styles = StyleSheet.create({
   },
   cardWrap: {
     marginTop: 0,
-  },
-  summary: {
-    backgroundColor: colors.blueLight,
-    borderRadius: 8,
-    marginTop: 14,
-    padding: 16,
-  },
-  summaryTitle: {
-    color: colors.ink,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  summaryText: {
-    color: colors.muted,
-    fontSize: 13,
-    fontWeight: '700',
-    lineHeight: 19,
-    marginTop: 6,
   },
   actions: {
     gap: 10,

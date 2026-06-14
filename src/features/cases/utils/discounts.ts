@@ -10,6 +10,7 @@ type DiscountTimelineItem = {
   title: string;
   date: string;
   description: string;
+  isCurrent?: boolean;
   state: 'safe' | 'attention' | 'risk' | 'pending';
 };
 
@@ -84,6 +85,7 @@ export function analyzeCaseDiscount(item: CaseRecord, queryDate = new Date()): D
           title: 'Fecha pendiente',
           date: item.issueDate,
           description: 'Necesitamos una fecha de emision valida para calcular la cronologia.',
+          isCurrent: true,
           state: 'pending',
         },
       ],
@@ -154,9 +156,9 @@ export function analyzeCaseDiscount(item: CaseRecord, queryDate = new Date()): D
       code,
       issueDateLabel,
       queryDateLabel,
-      reason: 'Ya paso el plazo inicial, pero aun puede aplicar el tramo previo a la resolucion de sancion.',
+      reason: 'Ya paso el descuento mayor, pero aun puedes pagar con descuento menor antes de la resolucion de sancion.',
       rule: secondWindowDiscount,
-      summary: 'Descuento de segunda ventana vigente',
+      summary: 'Descuento menor vigente',
       timeline,
     });
   }
@@ -270,6 +272,8 @@ function buildDiscountTimeline({
   queryDate: Date;
   secondWindowStart: Date;
 }): DiscountTimelineItem[] {
+  const currentDiscountStep = businessDaysElapsed <= 5 ? 'initial' : 'reduced';
+
   return [
     {
       title: 'Emision o notificacion',
@@ -281,12 +285,14 @@ function buildDiscountTimeline({
       title: '83% de descuento',
       date: `Hasta ${formatDate(initialWindowEnd)}`,
       description: 'Aplica dentro de los primeros 5 dias habiles si el codigo no esta excluido.',
+      isCurrent: currentDiscountStep === 'initial',
       state: businessDaysElapsed <= 5 ? 'safe' : 'pending',
     },
     {
       title: '67% de descuento',
       date: `Desde ${formatDate(secondWindowStart)}`,
       description: 'Corre desde el sexto dia habil hasta antes de la resolucion de sancion.',
+      isCurrent: currentDiscountStep === 'reduced',
       state: businessDaysElapsed > 5 ? 'attention' : 'pending',
     },
     {

@@ -68,14 +68,14 @@ export default function ConsultationScreen() {
     setValues((current) => ({ ...current, [field]: value }));
   }
 
-  function searchCase() {
-    if (!searchRequest) {
+  function searchCase(request = searchRequest) {
+    if (!request) {
       return;
     }
 
     const query = buildQueryParams({
-      field: searchRequest.field,
-      input: searchRequest.input,
+      field: request.field,
+      input: request.input,
     });
 
     navigateTo(`/(drawer)/(tabs)/inicio/resultado?${query}`);
@@ -88,18 +88,25 @@ export default function ConsultationScreen() {
       description="Elige el dato que tengas. Te mostraremos estado, descuentos y proximos pasos."
     >
       <View style={styles.list}>
-        {inputs.map((item) => (
-          <SegmentedField
-            helper={item.helper}
-            icon={item.icon}
-            key={item.label}
-            label={item.label}
-            mode={item.mode}
-            onChange={(value) => updateField(item.id, value)}
-            segments={item.segments}
-            value={values[item.id]}
-          />
-        ))}
+        {inputs.map((item) => {
+          const fieldSearchRequest = getFieldSearchRequest(item.id, values[item.id]);
+
+          return (
+            <SegmentedField
+              canSearch={Boolean(fieldSearchRequest)}
+              field={item.id}
+              helper={item.helper}
+              icon={item.icon}
+              key={item.label}
+              label={item.label}
+              mode={item.mode}
+              onChange={(value) => updateField(item.id, value)}
+              onSearch={(request) => searchCase(request)}
+              segments={item.segments}
+              value={values[item.id]}
+            />
+          );
+        })}
       </View>
 
       <View style={styles.helpCard}>
@@ -118,19 +125,25 @@ export default function ConsultationScreen() {
 }
 
 function SegmentedField({
+  canSearch,
+  field,
   helper,
   icon,
   label,
   mode,
   onChange,
+  onSearch,
   segments,
   value,
 }: {
+  canSearch: boolean;
+  field: CaseSearchField;
   helper: string;
   icon: IconName;
   label: string;
   mode?: 'code';
   onChange: (value: string) => void;
+  onSearch: (request: CaseSearchRequest) => void;
   segments: SegmentConfig[];
   value: string;
 }) {
@@ -187,6 +200,25 @@ function SegmentedField({
     refs.current[index - 1]?.focus();
   }
 
+  function searchCurrentValue() {
+    const request = getFieldSearchRequest(field, chars.join(''));
+    if (request) {
+      onSearch(request);
+    }
+  }
+
+  function handleSubmit(index: number) {
+    const request = getFieldSearchRequest(field, chars.join(''));
+    if (request) {
+      onSearch(request);
+      return;
+    }
+
+    if (index < totalLength - 1) {
+      refs.current[index + 1]?.focus();
+    }
+  }
+
   let charIndex = 0;
 
   return (
@@ -199,6 +231,19 @@ function SegmentedField({
           <Text style={styles.inputLabel}>{label}</Text>
           <Text style={styles.inputHint}>{helper}</Text>
         </View>
+        <Pressable
+          accessibilityLabel={`Buscar por ${label}`}
+          disabled={!canSearch}
+          hitSlop={8}
+          onPress={searchCurrentValue}
+          style={[styles.cardSearchButton, canSearch && styles.cardSearchButtonReady]}
+        >
+          <MaterialCommunityIcons
+            name="magnify"
+            size={32}
+            color={canSearch ? colors.cream : colors.muted}
+          />
+        </Pressable>
       </View>
       <View style={[styles.segmentRow, mode === 'code' && styles.segmentRowCode]}>
         {segments.map((segment, groupIndex) => {
@@ -232,6 +277,7 @@ function SegmentedField({
             return (
               <TextInput
                 autoCapitalize={kind === 'letter' ? 'characters' : 'none'}
+                blurOnSubmit={false}
                 key={currentIndex}
                 keyboardType={kind === 'number' ? 'number-pad' : 'default'}
                 maxLength={1}
@@ -241,9 +287,11 @@ function SegmentedField({
                     handleBackspace(currentIndex);
                   }
                 }}
+                onSubmitEditing={() => handleSubmit(currentIndex)}
                 ref={(ref) => {
                   refs.current[currentIndex] = ref;
                 }}
+                returnKeyType={currentIndex === totalLength - 1 ? 'search' : 'next'}
                 selectTextOnFocus
                 style={[styles.segmentBox, mode === 'code' && styles.segmentBoxCode]}
                 value={chars[currentIndex]}
@@ -291,20 +339,26 @@ function isAllowedForKind(value: string, kind: SegmentKind, choices: string[]) {
 }
 
 function getSearchRequest(values: Record<CaseSearchField, string>): CaseSearchRequest | null {
-  const ticket = normalizeSearchValue(values.ticket);
-  const plate = normalizeSearchValue(values.plate);
-  const document = normalizeSearchValue(values.document);
+  return (
+    getFieldSearchRequest('ticket', values.ticket) ??
+    getFieldSearchRequest('plate', values.plate) ??
+    getFieldSearchRequest('document', values.document)
+  );
+}
 
-  if (isTicketSearchReady(ticket)) {
-    return { field: 'ticket', input: ticket };
+function getFieldSearchRequest(field: CaseSearchField, value: string): CaseSearchRequest | null {
+  const input = normalizeSearchValue(value);
+
+  if (field === 'ticket' && isTicketSearchReady(input)) {
+    return { field, input };
   }
 
-  if (plate.length === 6) {
-    return { field: 'plate', input: plate };
+  if (field === 'plate' && input.length === 6) {
+    return { field, input };
   }
 
-  if (document.length === 8) {
-    return { field: 'document', input: document };
+  if (field === 'document' && input.length === 8) {
+    return { field, input };
   }
 
   return null;
@@ -351,6 +405,22 @@ const styles = StyleSheet.create({
   },
   inputText: {
     flex: 1,
+  },
+  cardSearchButton: {
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderColor: colors.line,
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 54,
+    justifyContent: 'center',
+    opacity: 0.55,
+    width: 54,
+  },
+  cardSearchButtonReady: {
+    backgroundColor: colors.navy,
+    borderColor: colors.navy,
+    opacity: 1,
   },
   inputLabel: {
     color: colors.ink,

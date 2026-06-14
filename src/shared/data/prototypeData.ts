@@ -9,6 +9,35 @@ import type {
   TimelineStep,
 } from '../types/ui';
 
+const issueDateYesterday = formatLocalDateDaysAgo(1);
+const issueDateFiveDaysAgo = formatLocalDateDaysAgo(5);
+const issueDateTenDaysAgo = formatLocalDateDaysAgo(10);
+
+function createDemoEvidence({
+  code,
+  issueDate,
+  plate,
+}: {
+  code: string;
+  issueDate: string;
+  plate: string;
+}): CaseRecord['evidence'] {
+  return [
+    {
+      id: `evidence-${code.toLowerCase()}-${plate.toLowerCase()}-photo-1`,
+      type: 'photo',
+      title: 'Fotopapeleta de prueba',
+      description:
+        `Fotopapeleta ficticia asociada al caso ${code} y placa ${plate}. Se reutiliza temporalmente para validar la revisión de evidencia.`,
+      imageAsset: 'demo-papeleta-g11',
+      imageAlt: `Fotopapeleta ficticia del caso ${code} con datos de prueba.`,
+      capturedAt: `${issueDate}T09:42:00-05:00`,
+      location: 'Av. Demo 123, Lima',
+      isMock: true,
+    },
+  ];
+}
+
 export const cases: CaseRecord[] = [
   {
     id: 'G11',
@@ -20,14 +49,15 @@ export const cases: CaseRecord[] = [
     infraction: 'Estacionar en zona rigida',
     plate: 'ABC-123',
     amount: 'S/ 440.00',
-    dueDate: '28/05/2025',
-    issueDate: '23/05/2025',
+    dueDate: '5 días hábiles; verificar cómputo oficial',
+    issueDate: issueDateYesterday,
     location: 'Av. Arequipa 1234 - Lince',
     status: 'En plazo inicial',
     risk: 'Bajo',
     canDiscount: true,
     stage: 'Papeleta emitida',
     nextStep: 'Pagar con descuento o presentar descargo',
+    evidence: createDemoEvidence({ code: 'G11', issueDate: issueDateYesterday, plate: 'ABC-123' }),
   },
   {
     id: 'M20',
@@ -39,14 +69,15 @@ export const cases: CaseRecord[] = [
     infraction: 'No respetar semaforo',
     plate: 'SAT-202',
     amount: 'S/ 2,575.00',
-    dueDate: 'Vencio hace 3 dias',
-    issueDate: '18/05/2025',
+    dueDate: 'Emitida hace 5 días calendario',
+    issueDate: issueDateFiveDaysAgo,
     location: 'Av. Javier Prado con Guardia Civil',
     status: 'Sancion firme',
     risk: 'Alto',
     canDiscount: false,
     stage: 'Riesgo coactivo',
     nextStep: 'Revisar medidas y canal oficial',
+    evidence: createDemoEvidence({ code: 'M20', issueDate: issueDateFiveDaysAgo, plate: 'SAT-202' }),
   },
   {
     id: 'G46',
@@ -54,31 +85,32 @@ export const cases: CaseRecord[] = [
     ticketCode: 'G46',
     ticketNumber: 'G46654321',
     searchTicketNumber: 'G46654321',
-    searchAliases: ['DEM003', 'LIM046', 'G46', 'G46654321', '45678901'],
+    searchAliases: ['DEM003', 'DEM005', 'LIM046', 'G46', 'G46654321', '45678901'],
     infraction: 'Exceso de velocidad',
     plate: 'LIM-046',
     amount: 'S/ 880.00',
-    dueDate: 'En revision',
-    issueDate: '20/05/2025',
+    dueDate: 'Emitida hace 10 días calendario',
+    issueDate: issueDateTenDaysAgo,
     location: 'Via Expresa - tramo central',
-    status: 'Apelacion presentada',
+    status: 'Antes de resolución de sanción',
     risk: 'Medio',
-    canDiscount: false,
-    stage: 'Descargo presentado',
-    nextStep: 'Hacer seguimiento al expediente',
+    canDiscount: true,
+    stage: 'Segunda ventana de descuento',
+    nextStep: 'Evaluar pago con descuento de segunda ventana o consultar expediente',
+    evidence: createDemoEvidence({ code: 'G46', issueDate: issueDateTenDaysAgo, plate: 'LIM-046' }),
   },
 ];
 
 export const timelineSteps: TimelineStep[] = [
   {
     title: 'Papeleta emitida',
-    date: '23/05/2025',
+    date: issueDateYesterday,
     state: 'safe',
     description: 'El SAT registro la infraccion y abrio el plazo inicial.',
   },
   {
     title: 'Inicio del procedimiento',
-    date: '23/05/2025',
+    date: issueDateYesterday,
     state: 'safe',
     description: 'La ruta ya puede consultarse y seguirse desde la app.',
   },
@@ -199,3 +231,12 @@ export const toneColor: Record<AlertTone | CaseOption['tone'], string> = {
   info: colors.blue,
   safe: colors.green,
 };
+
+function formatLocalDateDaysAgo(daysAgo: number) {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}

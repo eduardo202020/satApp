@@ -8,11 +8,14 @@ import { PrimaryButton } from '../../shared/components/PrimaryButton';
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
+import { useCases } from './hooks/useCases';
 
 const requirements = ['Copia de la papeleta o resolución', 'Documento de identidad', 'Evidencia o sustento'];
 
 export default function CaseSubmissionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { getCaseById } = useCases();
+  const item = getCaseById(id);
   const [checked, setChecked] = useState<string[]>([]);
   const [attached, setAttached] = useState(false);
   const [statement, setStatement] = useState('No estoy de acuerdo con la papeleta y solicito que se revise la evidencia adjunta.');
@@ -24,13 +27,13 @@ export default function CaseSubmissionScreen() {
     setSubmitting(true);
     setError('');
     try {
-      const submission = await submitCaseAction(id, {
+      const submission = await submitCaseAction(item.id, {
         action: 'presentar_descargo',
         userStatement: statement,
         checklist: checked,
         attachments: ['sustento-descargo.pdf'],
       });
-      navigateTo(`/caso/${id}/constancia?submissionId=${submission.id}`);
+      navigateTo(`/caso/${item.id}/constancia?submissionId=${submission.id}`);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'No se pudo registrar el tramite.');
     } finally {

@@ -21,7 +21,7 @@ export default function CaseStackLayout() {
       <Stack.Screen name="checklist" options={{ title: 'Checklist' }} />
       <Stack.Screen name="canal-oficial" options={{ title: 'Canal oficial SAT' }} />
       <Stack.Screen name="evidencia" options={{ title: 'Evidencia' }} />
-      <Stack.Screen name="diagnostico" options={{ title: 'Diagnóstico claro' }} />
+      <Stack.Screen name="diagnostico" options={{ title: 'Entender mi situación' }} />
       <Stack.Screen name="tramite" options={{ title: 'Preparar descargo' }} />
       <Stack.Screen name="constancia" options={{ title: 'Constancia' }} />
       <Stack.Screen name="seguimiento" options={{ title: 'Seguimiento' }} />

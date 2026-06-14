@@ -16,6 +16,8 @@ type ApiEvidence = {
   type: string;
   title: string;
   description: string;
+  image_asset?: string;
+  image_alt?: string;
   captured_at: string;
   location: string;
   is_mock: boolean;
@@ -140,6 +142,8 @@ function mapEvidence(item: ApiEvidence): EvidenceItem {
     type: item.type,
     title: item.title,
     description: item.description,
+    imageAsset: item.image_asset,
+    imageAlt: item.image_alt,
     capturedAt: item.captured_at,
     location: item.location,
     isMock: item.is_mock,

@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { navigateTo } from '../navigation/routes';
@@ -31,6 +32,14 @@ export function CaseCard({ item, compact = false }: CaseCardProps) {
         <Detail label="Vence" value={item.dueDate} />
         <Detail label="Riesgo" value={item.risk} valueTone={riskTone} />
       </View>
+
+      {compact && (
+        <View style={styles.compactArrowWrap}>
+          <View style={styles.compactArrow}>
+            <MaterialCommunityIcons name="arrow-right" size={34} color={colors.cream} />
+          </View>
+        </View>
+      )}
 
       {!compact && (
         <View style={styles.buttonRow}>
@@ -78,6 +87,18 @@ const styles = StyleSheet.create({
   },
   compactCard: {
     marginTop: 0,
+  },
+  compactArrowWrap: {
+    alignItems: 'flex-end',
+    marginTop: 12,
+  },
+  compactArrow: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 999,
+    height: 58,
+    justifyContent: 'center',
+    width: 58,
   },
   header: {
     alignItems: 'center',

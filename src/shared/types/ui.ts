@@ -42,6 +42,8 @@ export type EvidenceItem = {
   type: string;
   title: string;
   description: string;
+  imageAsset?: string;
+  imageAlt?: string;
   capturedAt: string;
   location: string;
   isMock: boolean;
