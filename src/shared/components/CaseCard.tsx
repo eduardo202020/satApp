@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { navigateTo } from '../navigation/routes';
@@ -10,14 +11,15 @@ import { StatusPill } from './StatusPill';
 type CaseCardProps = {
   item: CaseRecord;
   compact?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
-export function CaseCard({ item, compact = false }: CaseCardProps) {
+export function CaseCard({ item, compact = false, style }: CaseCardProps) {
   const riskTone = item.risk === 'Alto' ? 'risk' : item.risk === 'Medio' ? 'attention' : 'safe';
 
   return (
     <Pressable
-      style={[styles.card, compact && styles.compactCard]}
+      style={[styles.card, compact && styles.compactCard, style]}
       onPress={() => navigateTo(`/caso/${item.id}`)}
     >
       <View style={styles.header}>

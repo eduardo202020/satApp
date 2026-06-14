@@ -1,3 +1,4 @@
+import type { StyleProp, ViewStyle } from 'react-native';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { colors } from '../styles/theme';
@@ -7,16 +8,17 @@ type PrimaryButtonProps = {
   onPress?: () => void;
   variant?: 'primary' | 'secondary';
   disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
-export function PrimaryButton({ label, onPress, variant = 'primary', disabled = false }: PrimaryButtonProps) {
+export function PrimaryButton({ label, onPress, variant = 'primary', disabled = false, style }: PrimaryButtonProps) {
   const isSecondary = variant === 'secondary';
 
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      style={[styles.button, isSecondary && styles.secondaryButton, disabled && styles.disabled]}
+      style={[styles.button, isSecondary && styles.secondaryButton, disabled && styles.disabled, style]}
     >
       <Text style={[styles.label, isSecondary && styles.secondaryLabel]}>{label}</Text>
     </Pressable>

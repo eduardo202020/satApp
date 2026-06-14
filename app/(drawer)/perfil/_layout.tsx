@@ -1,28 +1,20 @@
 import { Stack } from 'expo-router';
 
 import { HeaderAlertButton, HeaderMenuButton } from '../../../src/navigation/HeaderButtons';
-import { colors } from '../../../src/shared/styles/theme';
+import { useAppStackHeaderOptions } from '../../../src/navigation/useAppStackHeaderOptions';
 
 export default function ProfileStackLayout() {
+  const headerOptions = useAppStackHeaderOptions();
+
   return (
     <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.navy },
-        headerShadowVisible: false,
-        headerRight: () => <HeaderAlertButton />,
-        headerTintColor: colors.cream,
-        headerTitleAlign: 'center',
-        headerTitleStyle: {
-          color: colors.cream,
-          fontSize: 17,
-          fontWeight: '900',
-        },
-      }}
+      screenOptions={headerOptions}
     >
       <Stack.Screen
         name="index"
         options={{
           headerLeft: () => <HeaderMenuButton />,
+          headerRight: () => <HeaderAlertButton />,
           title: 'Perfil',
         }}
       />

@@ -2,10 +2,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { HeaderAlertButton, HeaderMenuButton } from '../../../src/navigation/HeaderButtons';
+import { useResponsiveLayout } from '../../../src/shared/hooks/useResponsiveLayout';
 import { colors } from '../../../src/shared/styles/theme';
+import { useAppStackHeaderOptions } from '../../../src/navigation/useAppStackHeaderOptions';
 
 export default function TabsLayout() {
+  const { isWeb } = useResponsiveLayout();
+
   return (
     <Tabs
       initialRouteName="inicio"
@@ -15,21 +18,10 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.muted,
         tabBarShowLabel: false,
         tabBarItemStyle: styles.tabBarItem,
-        tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopWidth: 0,
-          borderTopLeftRadius: 22,
-          borderTopRightRadius: 22,
-          elevation: 0,
-          height: 78,
-          paddingBottom: 8,
-          paddingHorizontal: 8,
-          paddingTop: 8,
-          shadowColor: colors.navy,
-          shadowOffset: { height: -4, width: 0 },
-          shadowOpacity: 0,
-          shadowRadius: 0,
-        },
+        tabBarStyle: [
+          styles.tabBar,
+          isWeb && styles.tabBarHidden,
+        ],
       }}
     >
       <Tabs.Screen
@@ -63,20 +55,9 @@ export default function TabsLayout() {
   );
 }
 
-export const stackHeaderOptions = {
-  headerTitleAlign: 'center' as const,
-  headerStyle: {
-    backgroundColor: colors.navy,
-  },
-  headerTintColor: colors.cream,
-  headerTitleStyle: {
-    color: colors.cream,
-    fontSize: 17,
-    fontWeight: '900' as const,
-  },
-  headerLeft: () => <HeaderMenuButton />,
-  headerRight: () => <HeaderAlertButton />,
-};
+export function useStackHeaderOptions() {
+  return useAppStackHeaderOptions({ showMenuOnMobile: true });
+}
 
 function TabItem({ focused, icon, label }: { focused: boolean; icon: keyof typeof MaterialCommunityIcons.glyphMap; label: string }) {
   return (
@@ -93,6 +74,24 @@ const styles = StyleSheet.create({
     height: 62,
     justifyContent: 'center',
     paddingVertical: 0,
+  },
+  tabBar: {
+    backgroundColor: colors.card,
+    borderTopWidth: 0,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    elevation: 0,
+    height: 78,
+    paddingBottom: 8,
+    paddingHorizontal: 8,
+    paddingTop: 8,
+    shadowColor: colors.navy,
+    shadowOffset: { height: -4, width: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+  },
+  tabBarHidden: {
+    display: 'none',
   },
   tabItem: {
     alignItems: 'center',

@@ -279,12 +279,15 @@ const dayToneStyle = {
 
 const styles = StyleSheet.create({
   calendarCard: {
+    alignSelf: 'center',
     backgroundColor: colors.card,
     borderColor: colors.line,
     borderRadius: 12,
     borderWidth: 1,
     marginTop: 14,
+    maxWidth: 780,
     padding: 12,
+    width: '100%',
   },
   dayCell: {
     borderRadius: 9,

@@ -7,6 +7,7 @@ import { Image, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'reac
 
 import { registerPendingTicket } from '../cases/pendingRegistrations';
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
+import { ResponsiveGrid } from '../../shared/components/ResponsiveGrid';
 import {
   documentSegments,
   plateSegments,
@@ -14,11 +15,13 @@ import {
   ticketCodeSegments,
 } from '../../shared/components/SegmentedField';
 import { ScreenShell } from '../../shared/components/ScreenShell';
+import { useResponsiveLayout } from '../../shared/hooks/useResponsiveLayout';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import { normalizeSearchValue, type CaseSearchField } from './utils/caseSearch';
 
 export default function TicketRegistrationScreen() {
+  const { isWide } = useResponsiveLayout();
   const { field, input } = useLocalSearchParams<{
     field?: CaseSearchField;
     input?: string;
@@ -123,7 +126,7 @@ export default function TicketRegistrationScreen() {
         </View>
       </View>
 
-      <View style={styles.segmentedForm}>
+      <ResponsiveGrid minItemWidth={420} style={styles.segmentedForm}>
         <SegmentedField
           helper="Ejemplo: ABC-123"
           icon="car-outline"
@@ -149,7 +152,7 @@ export default function TicketRegistrationScreen() {
           segments={documentSegments}
           value={documentNumber}
         />
-      </View>
+      </ResponsiveGrid>
 
       <View style={styles.form}>
         <View style={styles.row}>
@@ -223,9 +226,19 @@ export default function TicketRegistrationScreen() {
         <ChecklistItem done={attached} label="Foto o copia para sustento" />
       </View>
 
-      <View style={styles.actions}>
-        <PrimaryButton label="Registrar para seguimiento" disabled={!ready} onPress={submitRegistration} />
-        <PrimaryButton label="Volver a consulta" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')} />
+      <View style={[styles.actions, isWide && styles.actionsWide]}>
+        <PrimaryButton
+          label="Registrar para seguimiento"
+          disabled={!ready}
+          onPress={submitRegistration}
+          style={isWide && styles.actionButtonWide}
+        />
+        <PrimaryButton
+          label="Volver a consulta"
+          variant="secondary"
+          onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')}
+          style={isWide && styles.actionButtonWide}
+        />
       </View>
 
       <CalendarModal
@@ -426,6 +439,12 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 18,
   },
+  actionsWide: {
+    flexDirection: 'row',
+  },
+  actionButtonWide: {
+    flex: 1,
+  },
   attachment: {
     alignItems: 'center',
     backgroundColor: colors.blueLight,
@@ -526,6 +545,7 @@ const styles = StyleSheet.create({
   calendarCard: {
     backgroundColor: colors.card,
     borderRadius: 18,
+    maxWidth: 440,
     padding: 18,
     width: '90%',
   },

@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
 import { ScreenShell } from '../../shared/components/ScreenShell';
+import { useResponsiveLayout } from '../../shared/hooks/useResponsiveLayout';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import { useCases } from './hooks/useCases';
@@ -14,6 +15,7 @@ type PaymentMethod = 'card' | 'bank' | 'yape';
 type PaymentStep = 'method' | 'yape' | 'success';
 
 export default function CasePaymentScreen() {
+  const { isWide } = useResponsiveLayout();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { getCaseById } = useCases();
   const item = getCaseById(id);
@@ -66,9 +68,18 @@ export default function CasePaymentScreen() {
           <Text style={styles.receiptLabel}>Total</Text>
           <Text style={styles.total}>{amount}</Text>
         </View>
-        <View style={styles.actions}>
-          <PrimaryButton label="Ver seguimiento" onPress={() => navigateTo(`/caso/${item.id}/seguimiento`)} />
-          <PrimaryButton label="Volver a mis casos" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/casos')} />
+        <View style={[styles.actions, isWide && styles.actionsWide]}>
+          <PrimaryButton
+            label="Ver seguimiento"
+            onPress={() => navigateTo(`/caso/${item.id}/seguimiento`)}
+            style={isWide && styles.actionButtonWide}
+          />
+          <PrimaryButton
+            label="Volver a mis casos"
+            variant="secondary"
+            onPress={() => navigateTo('/(drawer)/(tabs)/casos')}
+            style={isWide && styles.actionButtonWide}
+          />
         </View>
       </ScreenShell>
     );
@@ -123,7 +134,7 @@ export default function CasePaymentScreen() {
             />
           </View>
           <View style={styles.actions}>
-            <PrimaryButton label="Continuar" disabled={method !== 'yape'} onPress={continueFromMethod} />
+            <PrimaryButton label="Continuar" disabled={method !== 'yape'} onPress={continueFromMethod} style={isWide && styles.singleActionWide} />
           </View>
         </>
       ) : (
@@ -166,9 +177,20 @@ export default function CasePaymentScreen() {
               <Text style={styles.processingText}>Validando pago con Yape...</Text>
             </View>
           )}
-          <View style={styles.actions}>
-            <PrimaryButton label={processing ? 'Procesando...' : `Pagar ${amount}`} disabled={!canPay} onPress={payWithYape} />
-            <PrimaryButton label="Cambiar método" variant="secondary" disabled={processing} onPress={() => setStep('method')} />
+          <View style={[styles.actions, isWide && styles.actionsWide]}>
+            <PrimaryButton
+              label={processing ? 'Procesando...' : `Pagar ${amount}`}
+              disabled={!canPay}
+              onPress={payWithYape}
+              style={isWide && styles.actionButtonWide}
+            />
+            <PrimaryButton
+              label="Cambiar método"
+              variant="secondary"
+              disabled={processing}
+              onPress={() => setStep('method')}
+              style={isWide && styles.actionButtonWide}
+            />
           </View>
         </>
       )}
@@ -220,6 +242,16 @@ const styles = StyleSheet.create({
   actions: {
     gap: 10,
     marginTop: 16,
+  },
+  actionsWide: {
+    flexDirection: 'row',
+  },
+  actionButtonWide: {
+    flex: 1,
+  },
+  singleActionWide: {
+    alignSelf: 'center',
+    minWidth: 320,
   },
   codeBox: {
     alignItems: 'center',

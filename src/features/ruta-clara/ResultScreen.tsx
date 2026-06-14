@@ -4,13 +4,16 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { CaseCard } from '../../shared/components/CaseCard';
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
+import { ResponsiveGrid } from '../../shared/components/ResponsiveGrid';
 import { ScreenShell } from '../../shared/components/ScreenShell';
+import { useResponsiveLayout } from '../../shared/hooks/useResponsiveLayout';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import { useCases } from '../cases/hooks/useCases';
 import { findCasesBySearch, searchFieldLabel, type CaseSearchField } from './utils/caseSearch';
 
 export default function ResultScreen() {
+  const { isWide } = useResponsiveLayout();
   const { caseId, field, input } = useLocalSearchParams<{
     caseId?: string;
     field?: CaseSearchField;
@@ -38,13 +41,13 @@ export default function ResultScreen() {
     >
       {hasMatches ? (
         <>
-          <View style={styles.resultsList}>
+          <ResponsiveGrid minItemWidth={360} style={styles.resultsList}>
             {matches.map((item) => (
               <View style={styles.cardWrap} key={item.id}>
                 <CaseCard item={item} compact />
               </View>
             ))}
-          </View>
+          </ResponsiveGrid>
         </>
       ) : (
         <>
@@ -67,13 +70,23 @@ export default function ResultScreen() {
               </Text>
             </View>
           </View>
-          <View style={styles.actions}>
+          <View style={[styles.actions, isWide && styles.actionsWide]}>
             <PrimaryButton
               label="Registrar papeleta"
               onPress={() => navigateTo(`/(drawer)/(tabs)/inicio/registrar-papeleta?${registrationQuery}`)}
+              style={isWide && styles.actionButtonWide}
             />
-            <PrimaryButton label="Corregir datos" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')} />
-            <PrimaryButton label="Consultar por voz" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/voz')} />
+            <PrimaryButton
+              label="Corregir datos"
+              onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')}
+              style={isWide && styles.actionButtonWide}
+            />
+            <PrimaryButton
+              label="Consultar por voz"
+              variant="secondary"
+              onPress={() => navigateTo('/(drawer)/(tabs)/inicio/voz')}
+              style={isWide && styles.actionButtonWide}
+            />
           </View>
         </>
       )}
@@ -106,6 +119,12 @@ const styles = StyleSheet.create({
   actions: {
     gap: 10,
     marginTop: 16,
+  },
+  actionsWide: {
+    flexDirection: 'row',
+  },
+  actionButtonWide: {
+    flex: 1,
   },
   emptyCard: {
     alignItems: 'center',

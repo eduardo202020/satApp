@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ResponsiveGrid } from '../../shared/components/ResponsiveGrid';
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { StatusPill } from '../../shared/components/StatusPill';
 import { navigateTo } from '../../shared/navigation/routes';
@@ -97,7 +98,7 @@ export default function CaseDetailScreen() {
         </Text>
       </View>
 
-      <View style={styles.actions}>
+      <ResponsiveGrid minItemWidth={360} style={styles.actions}>
         {explorationItems.map((entry) => (
           <Pressable key={entry.title} onPress={() => navigateTo(entry.href)} style={styles.actionCard}>
             <View style={styles.actionIcon}>
@@ -110,7 +111,7 @@ export default function CaseDetailScreen() {
             <MaterialCommunityIcons name="chevron-right" size={24} color={colors.muted} />
           </Pressable>
         ))}
-      </View>
+      </ResponsiveGrid>
     </ScreenShell>
   );
 }

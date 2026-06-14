@@ -1,10 +1,12 @@
 import { Stack } from 'expo-router';
 
-import { stackHeaderOptions } from '../_layout';
+import { useStackHeaderOptions } from '../_layout';
 
 export default function HelpStackLayout() {
+  const headerOptions = useStackHeaderOptions();
+
   return (
-    <Stack screenOptions={stackHeaderOptions}>
+    <Stack screenOptions={headerOptions}>
       <Stack.Screen name="index" options={{ title: 'Ayuda' }} />
     </Stack>
   );

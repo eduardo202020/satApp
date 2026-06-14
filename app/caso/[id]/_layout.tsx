@@ -1,21 +1,12 @@
 import { Stack } from 'expo-router';
 
-import { colors } from '../../../src/shared/styles/theme';
+import { useAppStackHeaderOptions } from '../../../src/navigation/useAppStackHeaderOptions';
 
 export default function CaseStackLayout() {
+  const headerOptions = useAppStackHeaderOptions();
+
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.navy },
-        headerTintColor: colors.cream,
-        headerTitleAlign: 'center',
-        headerTitleStyle: {
-          color: colors.cream,
-          fontSize: 17,
-          fontWeight: '900',
-        },
-      }}
-    >
+    <Stack screenOptions={headerOptions}>
       <Stack.Screen name="index" options={{ title: 'Detalle del caso' }} />
       <Stack.Screen name="timeline" options={{ title: 'Linea de tiempo' }} />
       <Stack.Screen name="opciones" options={{ title: 'Opciones' }} />

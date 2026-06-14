@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useResponsiveLayout } from '../hooks/useResponsiveLayout';
 import { colors } from '../styles/theme';
 
 type ScreenShellProps = {
@@ -19,6 +20,8 @@ export function ScreenShell({
   children,
   compact = false,
 }: ScreenShellProps) {
+  const { contentMaxWidth, isDesktop, isWeb, screenPadding } = useResponsiveLayout();
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <KeyboardAvoidingView
@@ -32,17 +35,24 @@ export function ScreenShell({
           contentContainerStyle={[
             styles.screenContent,
             compact && styles.compactContent,
+            {
+              paddingBottom: isWeb ? 32 : 24,
+              paddingHorizontal: screenPadding,
+              paddingTop: isDesktop ? 28 : 20,
+            },
           ]}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.hero}>
-            <View>
-              <Text style={styles.eyebrow}>{eyebrow}</Text>
-              <Text style={styles.title}>{title}</Text>
+          <View style={[styles.contentFrame, { maxWidth: contentMaxWidth }]}>
+            <View style={[styles.hero, isDesktop && styles.heroDesktop]}>
+              <View>
+                <Text style={styles.eyebrow}>{eyebrow}</Text>
+                <Text style={[styles.title, isDesktop && styles.titleDesktop]}>{title}</Text>
+              </View>
+              <Text style={[styles.description, isDesktop && styles.descriptionDesktop]}>{description}</Text>
             </View>
-            <Text style={styles.description}>{description}</Text>
+            {children}
           </View>
-          {children}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -61,11 +71,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   screenContent: {
-    padding: 20,
-    paddingBottom: 24,
+    alignItems: 'center',
+    flexGrow: 1,
   },
   compactContent: {
     paddingBottom: 24,
+  },
+  contentFrame: {
+    alignSelf: 'center',
+    width: '100%',
   },
   hero: {
     backgroundColor: colors.card,
@@ -73,6 +87,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     padding: 20,
+  },
+  heroDesktop: {
+    padding: 28,
   },
   eyebrow: {
     color: colors.blue,
@@ -88,10 +105,20 @@ const styles = StyleSheet.create({
     lineHeight: 33,
     marginTop: 8,
   },
+  titleDesktop: {
+    fontSize: 36,
+    lineHeight: 42,
+    maxWidth: 760,
+  },
   description: {
     color: colors.muted,
     fontSize: 15,
     lineHeight: 22,
     marginTop: 14,
+  },
+  descriptionDesktop: {
+    fontSize: 17,
+    lineHeight: 26,
+    maxWidth: 760,
   },
 });

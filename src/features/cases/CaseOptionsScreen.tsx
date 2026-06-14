@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ResponsiveGrid } from '../../shared/components/ResponsiveGrid';
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { colors } from '../../shared/styles/theme';
 import { toneColor } from '../../shared/data/prototypeData';
@@ -70,7 +71,7 @@ export default function CaseOptionsScreen() {
         </View>
       </View>
 
-      <View style={styles.list}>
+      <ResponsiveGrid minItemWidth={330} style={styles.list}>
         {displayOptions.map((option) => {
           const target = getOptionTarget(option);
           const optionStyle = [
@@ -112,7 +113,7 @@ export default function CaseOptionsScreen() {
             </Pressable>
           );
         })}
-      </View>
+      </ResponsiveGrid>
     </ScreenShell>
   );
 }

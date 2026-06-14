@@ -2,8 +2,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ResponsiveGrid } from '../../shared/components/ResponsiveGrid';
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { useSpeechReader } from '../../shared/hooks/useSpeechReader';
+import { useResponsiveLayout } from '../../shared/hooks/useResponsiveLayout';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 
@@ -51,6 +53,7 @@ const tabGuides: Array<{ icon: IconName; title: string; text: string }> = [
 ];
 
 export default function HelpScreen() {
+  const { isWide } = useResponsiveLayout();
   const { speaking, toggleSpeech } = useSpeechReader();
   const speechText = [
     'Cómo usar SatApp.',
@@ -82,16 +85,20 @@ export default function HelpScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Los 3 botones principales</Text>
-        {tabGuides.map((item) => (
-          <GuideCard key={item.title} {...item} />
-        ))}
+        <ResponsiveGrid minItemWidth={300}>
+          {tabGuides.map((item) => (
+            <GuideCard key={item.title} {...item} />
+          ))}
+        </ResponsiveGrid>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Flujo recomendado</Text>
-        {flowSteps.map((item) => (
-          <GuideCard key={item.title} {...item} />
-        ))}
+        <ResponsiveGrid minItemWidth={360}>
+          {flowSteps.map((item) => (
+            <GuideCard key={item.title} {...item} />
+          ))}
+        </ResponsiveGrid>
       </View>
 
       <View style={styles.tipCard}>
@@ -101,7 +108,7 @@ export default function HelpScreen() {
         </Text>
       </View>
 
-      <View style={styles.actions}>
+      <View style={[styles.actions, isWide && styles.actionsWide]}>
         <Pressable style={styles.primaryAction} onPress={() => navigateTo('/(drawer)/(tabs)/inicio/consulta')}>
           <Text style={styles.primaryActionText}>Consultar una papeleta</Text>
         </Pressable>
@@ -131,6 +138,9 @@ const styles = StyleSheet.create({
   actions: {
     gap: 10,
     marginTop: 16,
+  },
+  actionsWide: {
+    flexDirection: 'row',
   },
   guideBody: {
     color: colors.muted,
@@ -212,6 +222,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.navy,
     borderRadius: 10,
+    flex: 1,
     minHeight: 50,
     justifyContent: 'center',
   },
@@ -224,6 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.blueLight,
     borderRadius: 10,
+    flex: 1,
     minHeight: 50,
     justifyContent: 'center',
   },

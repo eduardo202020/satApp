@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../shared/components/PrimaryButton';
+import { ResponsiveGrid } from '../../shared/components/ResponsiveGrid';
 import {
   documentSegments,
   plateSegments,
@@ -11,6 +12,7 @@ import {
   type SegmentConfig,
 } from '../../shared/components/SegmentedField';
 import { ScreenShell } from '../../shared/components/ScreenShell';
+import { useResponsiveLayout } from '../../shared/hooks/useResponsiveLayout';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
 import type { IconName } from '../../shared/types/ui';
@@ -49,6 +51,7 @@ const inputs = [
 }>;
 
 export default function ConsultationScreen() {
+  const { isWide } = useResponsiveLayout();
   const [values, setValues] = useState<Record<CaseSearchField, string>>({
     document: '',
     plate: '',
@@ -79,7 +82,7 @@ export default function ConsultationScreen() {
       title="Que dato tienes a la mano?"
       description="Elige el dato que tengas. Te mostraremos estado, descuentos y proximos pasos."
     >
-      <View style={styles.list}>
+      <ResponsiveGrid minItemWidth={420} style={styles.list}>
         {inputs.map((item) => {
           const fieldSearchRequest = getFieldSearchRequest(item.id, values[item.id]);
 
@@ -108,7 +111,7 @@ export default function ConsultationScreen() {
             />
           );
         })}
-      </View>
+      </ResponsiveGrid>
 
       <View style={styles.helpCard}>
         <MaterialCommunityIcons name="information-outline" size={20} color={colors.blue} />
@@ -117,9 +120,19 @@ export default function ConsultationScreen() {
         </Text>
       </View>
 
-      <View style={styles.actions}>
-        <PrimaryButton label="Ver resultado" disabled={!searchRequest} onPress={searchCase} />
-        <PrimaryButton label="No se que dato usar" variant="secondary" onPress={() => navigateTo('/(drawer)/(tabs)/inicio/voz')} />
+      <View style={[styles.actions, isWide && styles.actionsWide]}>
+        <PrimaryButton
+          label="Ver resultado"
+          disabled={!searchRequest}
+          onPress={searchCase}
+          style={isWide && styles.actionButtonWide}
+        />
+        <PrimaryButton
+          label="No se que dato usar"
+          variant="secondary"
+          onPress={() => navigateTo('/(drawer)/(tabs)/inicio/voz')}
+          style={isWide && styles.actionButtonWide}
+        />
       </View>
     </ScreenShell>
   );
@@ -168,6 +181,12 @@ const styles = StyleSheet.create({
   actions: {
     gap: 10,
     marginTop: 18,
+  },
+  actionsWide: {
+    flexDirection: 'row',
+  },
+  actionButtonWide: {
+    flex: 1,
   },
   helpCard: {
     alignItems: 'flex-start',

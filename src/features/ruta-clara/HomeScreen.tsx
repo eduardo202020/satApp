@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ResponsiveGrid } from '../../shared/components/ResponsiveGrid';
 import { ScreenShell } from '../../shared/components/ScreenShell';
 import { navigateTo } from '../../shared/navigation/routes';
 import { colors } from '../../shared/styles/theme';
@@ -32,7 +33,7 @@ export default function HomeScreen() {
       title="Que necesitas hacer hoy?"
       description="Consulta tu papeleta, revisa descuentos y sigue los pasos recomendados."
     >
-      <View style={styles.section}>
+      <ResponsiveGrid minItemWidth={330} style={styles.section}>
         {options.map((item) => (
           <Pressable
             key={item.title}
@@ -49,7 +50,7 @@ export default function HomeScreen() {
             <MaterialCommunityIcons name="chevron-right" size={22} color={colors.muted} />
           </Pressable>
         ))}
-      </View>
+      </ResponsiveGrid>
     </ScreenShell>
   );
 }
