@@ -1,203 +1,219 @@
-# SatApp
+# 🚦 SatApp
 
-Aplicacion movil construida con Expo, React Native y TypeScript para ayudar a ciudadanos a consultar, entender y gestionar papeletas de transito asociadas al SAT de Lima.
+![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?style=for-the-badge&logo=expo)
+![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?style=for-the-badge&logo=react&logoColor=001B3A)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![EAS Build](https://img.shields.io/badge/EAS-Build-4630EB?style=for-the-badge&logo=expo&logoColor=white)
 
-El objetivo del prototipo es convertir un proceso confuso en una ruta simple:
+**SatApp** es una aplicación móvil construida con **Expo + React Native + TypeScript** para ayudar a ciudadanos a consultar, entender y gestionar papeletas de tránsito asociadas al SAT de Lima.
 
-```text
-Consultar -> Entender -> Revisar fechas -> Decidir -> Actuar -> Seguir
-```
-
-La app esta pensada para usuarios no tecnicos, incluyendo personas adultas y adultos mayores. Por eso prioriza textos cortos, botones grandes, navegacion visible, lectura por voz y flujos guiados.
-
-## Estado actual
-
-### Navegacion principal
-
-La navegacion inferior tiene tres accesos:
-
-- `Casos`: lista de papeletas asociadas o registradas.
-- `Inicio`: punto de partida para consultar, usar voz o abrir un flujo.
-- `Ayuda`: guia simple para aprender a usar la app.
-
-El drawer queda como acceso secundario para perfil, canales SAT y WhatSAT.
-
-### Consulta
-
-La consulta permite buscar usando solo uno de estos datos:
-
-- placa del vehiculo;
-- numero o codigo de papeleta;
-- DNI.
-
-Los campos se llenan por caracteres para reducir errores. La placa se guia como `ABC-123`, el DNI tiene 8 digitos y el codigo de papeleta permite escoger tipo `G`, `L` o `M` y luego ingresar numeros.
-
-Si no hay papeletas asociadas al dato consultado, la app ofrece `Registrar papeleta` para casos donde el usuario ya tiene el documento fisico, pero el SAT aun no lo procesa.
-
-### Registro manual de papeleta
-
-La pantalla `Registrar papeleta` permite:
-
-- ingresar placa, papeleta y DNI con los mismos inputs guiados de consulta;
-- seleccionar fecha desde calendario;
-- ingresar monto estimado;
-- adjuntar foto real de la papeleta desde la galeria;
-- crear un caso preliminar para seguimiento.
-
-El registro manual se mantiene en memoria durante la sesion del prototipo. Para una version productiva debe persistirse en almacenamiento local o backend.
-
-### Detalle del caso
-
-Cada papeleta tiene una pantalla de detalle con datos basicos:
-
-- codigo y numero;
-- infraccion;
-- placa;
-- monto;
-- fecha de emision;
-- estado;
-- riesgo;
-- siguiente paso sugerido.
-
-Desde el detalle se accede a cuatro pantallas con responsabilidades separadas:
-
-- `Revisar evidencia`: ver foto o evidencia.
-- `Entender mi situacion`: explicar por que se genero la papeleta.
-- `Linea de tiempo`: analizar descuentos por fechas y dias habiles.
-- `Opciones y descuento`: elegir que hacer.
-
-### Entender mi situacion
-
-Esta pantalla ya no repite pagos ni cronologias. Su funcion es explicar la papeleta en lenguaje ciudadano:
-
-- que significa la infraccion;
-- por que pudo haberse generado;
-- que datos revisar antes de decidir;
-- codigo, placa e infraccion del caso.
-
-Incluye un boton `Escuchar explicacion` usando `expo-speech`, para que el usuario pueda oir la orientacion en voz alta.
-
-Si `sat-rag` esta disponible, puede complementar con una explicacion desde `POST /diagnostico-claro`. Si no responde, la pantalla sigue funcionando con una guia local.
-
-### Linea de tiempo
-
-La pantalla `Linea de tiempo` se centra en fechas y descuentos. Muestra:
-
-- fecha de emision;
-- fecha de consulta;
-- dias habiles transcurridos;
-- calendario mensual con colores;
-- tramo de 83%;
-- tramo de 67%;
-- fines de semana marcados como dias no habiles;
-- boton/card para pagar con beneficio cuando corresponde.
-
-Esta pantalla evita repetir acciones o explicaciones largas. Su objetivo es que el usuario entienda visualmente los plazos.
-
-### Opciones y descuento
-
-La pantalla `Opciones y descuento` muestra lo necesario para decidir:
-
-- si hay beneficio vigente;
-- monto base;
-- ahorro estimado;
-- monto estimado a pagar;
-- acciones disponibles.
-
-El pago ya no abre un navegador. Ahora navega a un flujo interno de pago.
-
-### Flujo de pago
-
-La ruta `/caso/[id]/pago` simula gestion de pago dentro de la app:
-
-- seleccion de metodo de pago;
-- Yape como metodo funcional del prototipo;
-- ingreso de numero de celular;
-- ingreso de codigo de aprobacion;
-- loading de procesamiento;
-- pantalla de exito con numero de orden y total.
-
-Los otros metodos aparecen deshabilitados para mostrar enfoque futuro.
-
-### Preparar descargo
-
-La pantalla `Preparar descargo` permite:
-
-- marcar checklist obligatorio;
-- escribir explicacion del usuario;
-- adjuntar sustento real con `expo-document-picker`;
-- subir multiples archivos;
-- aceptar fotos, PDF y documentos;
-- quitar adjuntos antes de registrar.
-
-El backend simula la constancia cuando se envia la accion.
-
-### Evidencia
-
-La pantalla de evidencia muestra la fotopapeleta de prueba asociada al caso. Permite revisar la imagen con zoom y desplazamiento. Por ahora usa un asset local de demostracion:
+La idea central es simple:
 
 ```text
-assets/evidence/papeleta.gif
+Consultar → Entender → Revisar fechas → Decidir → Actuar → Seguir
 ```
 
-### Ayuda inclusiva
+El prototipo está pensado para personas no técnicas, especialmente usuarios de **35 a 55 años**, adultos mayores o personas que no están familiarizadas con trámites digitales. Por eso prioriza textos cortos, botones grandes, navegación visible, entradas guiadas, lectura por voz y flujos paso a paso.
 
-El tab `Ayuda` explica:
+---
 
-- para que sirve cada tab;
-- flujo recomendado de uso;
-- consulta;
-- entendimiento de la infraccion;
-- linea de tiempo;
-- pago o descargo.
+## 🔗 Links importantes
 
-Incluye `Escuchar guia` con `expo-speech`, pensado para usuarios que prefieren audio o tienen dificultad leyendo textos largos.
+> Estos enlaces son temporales y están listos para que luego reemplaces la URL real.
 
-### Consulta por voz
+| Recurso | Link |
+|---|---|
+| 🎥 Video demo en YouTube | [Ver presentación de SatApp](https://youtu.be/REEMPLAZAR_VIDEO_DEMO) |
+| 📦 APK para instalar | [Descargar APK desde Google Drive](https://drive.google.com/file/d/REEMPLAZAR_ID_DEL_APK/view?usp=sharing) |
+| 🧠 Backend RAG | [`eduardo202020/sat-rag`](https://github.com/eduardo202020/sat-rag) |
 
-La consulta por voz usa `expo-speech-recognition` con una experiencia similar a una nota de voz:
+---
 
-- microfono;
-- contador;
-- onda dinamica;
+## 🎯 Problema que resuelve
+
+Una papeleta puede ser difícil de entender para una persona común:
+
+- no siempre queda claro qué significa el código de infracción;
+- los descuentos dependen de fechas y plazos;
+- el usuario no sabe si conviene pagar, reclamar o esperar;
+- los canales oficiales pueden sentirse dispersos;
+- cuando la papeleta aún no aparece en el sistema, el usuario queda sin una ruta clara.
+
+SatApp ordena esa información en una experiencia más humana: muestra el caso, explica qué ocurrió, calcula ventanas de beneficio, permite preparar descargos, registra seguimiento y guía al usuario sin saturarlo.
+
+---
+
+## ✨ Diferenciales del prototipo
+
+- 🧭 **Flujo guiado:** la app no muestra todo a la vez; separa consulta, explicación, evidencia, fechas, opciones y pago.
+- 🔡 **Inputs por carácter:** placa, DNI y código de infracción se ingresan en cajas individuales para reducir errores.
+- 🗓️ **Calendario de descuentos:** visualiza días hábiles, fines de semana y tramos de beneficio con colores.
+- 🔊 **Ayuda por voz:** algunas pantallas pueden leer la explicación para usuarios que prefieren escuchar.
+- 🎙️ **Consulta por voz:** el usuario puede hablar y recibir una transcripción orientativa.
+- 📎 **Descargo con sustento:** permite adjuntar fotos, PDF o documentos.
+- 💳 **Pago interno prototipo:** simula pago con Yape sin sacar al usuario al navegador.
+- 📱 **Diseño simple:** botones grandes, textos directos, navegación inferior con tres accesos principales.
+
+---
+
+## 🧩 Navegación principal
+
+La app usa una navegación inferior con tres accesos:
+
+| Tab | Función |
+|---|---|
+| 🧳 **Casos** | Retomar papeletas consultadas o registradas. |
+| 🏠 **Inicio** | Punto de partida para consultar, usar voz o revisar una papeleta. |
+| ❓ **Ayuda** | Guía simple para aprender a usar la app. |
+
+El drawer queda como menú secundario para:
+
+- 👤 Perfil;
+- 🏢 Canales oficiales SAT;
+- 🟢 WhatSAT.
+
+---
+
+## 📲 Pantallas de la app
+
+Las capturas están versionadas en [`docs/pantallas`](docs/pantallas/). Cada pantalla cumple una responsabilidad concreta para evitar duplicar información y no abrumar al usuario.
+
+### 1. Inicio
+
+<img src="docs/pantallas/01-inicio.png" width="260" alt="Pantalla de inicio de SatApp" />
+
+Pantalla de entrada con accesos directos a las acciones más importantes: consultar papeleta, consultar por voz, entender una papeleta y revisar descuentos. El objetivo es que el usuario no tenga que aprender la app antes de usarla.
+
+### 2. Menú lateral
+
+<img src="docs/pantallas/02-drawer.png" width="260" alt="Drawer de SatApp" />
+
+Drawer simplificado con pocas opciones. Se mantiene como navegación secundaria para no competir con los tres tabs principales.
+
+### 3. Consulta guiada
+
+<img src="docs/pantallas/03-consulta-guiada.png" width="260" alt="Consulta guiada por placa, código o DNI" />
+
+Permite buscar usando solo un dato: placa, código de infracción o DNI. Los campos se completan por carácter, con formato guiado y teclados adecuados para reducir errores de digitación.
+
+### 4. Detalle del caso
+
+<img src="docs/pantallas/04-detalle-caso.png" width="260" alt="Detalle de papeleta" />
+
+Resume la papeleta con información esencial: código, número, infracción, placa, monto, fecha, vencimiento, riesgo y estado. Desde aquí se abre cada flujo especializado.
+
+### 5. Evidencia
+
+<img src="docs/pantallas/05-evidencia.png" width="260" alt="Revisión de evidencia" />
+
+Sirve para contrastar la información registrada antes de pagar o presentar descargo. En el prototipo muestra una fotopapeleta de prueba.
+
+### 6. Entender mi situación
+
+<img src="docs/pantallas/06-entender-situacion.png" width="260" alt="Pantalla para entender la infracción" />
+
+Explica la papeleta en lenguaje ciudadano: qué significa, por qué pudo generarse y qué datos revisar. Esta pantalla evita repetir fechas o pagos; su foco es comprensión.
+
+### 7. Línea de tiempo: calendario
+
+<img src="docs/pantallas/07-linea-tiempo-calendario.png" width="260" alt="Calendario de descuentos" />
+
+Muestra fecha de emisión, fecha de consulta, días hábiles transcurridos y calendario mensual. Los colores ayudan a entender cuándo aplica cada beneficio.
+
+### 8. Línea de tiempo: beneficio
+
+<img src="docs/pantallas/08-linea-tiempo-beneficio.png" width="260" alt="Beneficio de pago desde línea de tiempo" />
+
+Explica cómo leer el calendario y ofrece una acción directa para pagar con beneficio cuando corresponde.
+
+### 9. Selección de pago
+
+<img src="docs/pantallas/09-pago-metodos.png" width="260" alt="Selección de método de pago" />
+
+Presenta métodos de pago de forma clara. Por ahora, Yape es el método habilitado dentro del prototipo; los demás quedan como ruta futura.
+
+### 10. Pago con Yape
+
+<img src="docs/pantallas/10-pago-yape.png" width="260" alt="Pago con Yape" />
+
+Simula el ingreso de celular y código de aprobación de Yape. Mantiene al usuario dentro de la app para que el flujo sea continuo.
+
+### 11. Pago registrado
+
+<img src="docs/pantallas/11-pago-confirmado.png" width="260" alt="Pago confirmado" />
+
+Muestra confirmación, número de orden y total pagado. Desde aquí se puede ir a seguimiento o volver a los casos.
+
+### 12. Opciones y descuento
+
+<img src="docs/pantallas/12-opciones-descuento.png" width="260" alt="Opciones y descuento" />
+
+Ayuda a decidir entre pagar con beneficio, presentar descargo o revisar otras opciones. Resume monto base, ahorro y monto estimado a pagar.
+
+### 13. Preparar descargo
+
+<img src="docs/pantallas/13-preparar-descargo.png" width="260" alt="Preparar descargo" />
+
+Permite marcar checklist, escribir explicación y adjuntar sustento. Acepta fotos, PDF y documentos mediante `expo-document-picker`.
+
+### 14. Mis casos
+
+<img src="docs/pantallas/14-mis-casos.png" width="260" alt="Mis casos" />
+
+Lista las papeletas asociadas o registradas por el usuario para retomar el seguimiento, revisar plazos y entrar al detalle.
+
+---
+
+## 🧪 Datos de prueba
+
+Para probar el flujo local de la app:
+
+| Dato ingresado | Resultado esperado |
+|---|---|
+| `ABC123` o `ABC-123` | Caso G11 con descuento |
+| `G11` o `G11125456` | Caso G11 |
+| `45678901` | Casos asociados a ese DNI |
+| `SAT202` o `M20078901` | Caso M20 |
+| `LIM046` o `G46654321` | Caso G46 |
+
+Datos disponibles desde `sat-rag`:
+
+| Placa | Código | Caso |
+|---|---|---|
+| `DEM001` | `G11` | `demo-g11-descuento` |
+| `DEM002` | `G27` | `demo-g27-plazo-proximo` |
+| `DEM003` | `M03` | `demo-m03-sancion-firme` |
+| `DEM005` | `G27` | `demo-g27-segunda-ventana` |
+| `DEM004` | `M42` | `demo-m42-riesgo-coactivo` |
+
+---
+
+## 🗣️ Consulta por voz
+
+La consulta por voz usa `expo-speech-recognition` y sigue una interacción inspirada en notas de voz:
+
+- grabar con micrófono;
+- ver contador;
+- observar onda dinámica;
 - pausar;
 - cancelar;
 - enviar;
-- transcripcion.
+- transcribir;
+- usar el texto para orientar el flujo.
 
-La transcripcion se usa para detectar intenciones basicas y navegar hacia el flujo adecuado.
+Esta función ayuda a usuarios que no quieren escribir o que se sienten más cómodos explicando su caso hablando.
 
-### Deep links
+---
 
-La app declara el esquema:
+## 🧠 Relación con sat-rag
 
-```text
-satapp://
-```
-
-Existe una ruta para abrir una papeleta desde enlace externo:
-
-```text
-satapp://papeleta/<id>
-```
-
-Internamente redirige a:
-
-```text
-/caso/<id>
-```
-
-Esto deja preparada una integracion futura con WhatsApp, SMS o una web externa.
-
-## Relacion con sat-rag
-
-La app puede consumir el backend `sat-rag` mediante:
+SatApp puede consumir el backend [`eduardo202020/sat-rag`](https://github.com/eduardo202020/sat-rag) mediante:
 
 ```bash
 EXPO_PUBLIC_SAT_API_URL=http://IP_DE_TU_PC:8000
 ```
 
-Importante: en un telefono fisico no usar `127.0.0.1`, porque apunta al propio telefono. Usa la IP LAN de la PC/WSL o una URL publica.
+Importante: si pruebas desde un teléfono físico, no uses `localhost` ni `127.0.0.1` dentro de la app. Usa la IP LAN de tu PC/WSL o una URL pública.
 
 La app consume principalmente:
 
@@ -207,31 +223,11 @@ La app consume principalmente:
 - `POST /cases/{case_id}/actions`
 - `POST /diagnostico-claro`
 
-Si el backend no esta disponible, la app conserva datos locales para que la demo siga navegable.
+Si el backend no está disponible, la app conserva datos locales para que el prototipo siga navegable.
 
-## Datos de prueba locales
+---
 
-Casos locales utiles:
-
-| Dato | Resultado esperado |
-|---|---|
-| `ABC123` o `ABC-123` | Caso G11 |
-| `G11` o `G11125456` | Caso G11 |
-| `45678901` | Casos asociados a ese DNI |
-| `SAT202` o `M20078901` | Caso M20 |
-| `LIM046` o `G46654321` | Caso G46 |
-
-Datos del backend `sat-rag`:
-
-| Placa | Codigo | Caso |
-|---|---|---|
-| `DEM001` | `G11` | `demo-g11-descuento` |
-| `DEM002` | `G27` | `demo-g27-plazo-proximo` |
-| `DEM003` | `M03` | `demo-m03-sancion-firme` |
-| `DEM005` | `G27` | `demo-g27-segunda-ventana` |
-| `DEM004` | `M42` | `demo-m42-riesgo-coactivo` |
-
-## Estructura
+## 🏗️ Estructura del proyecto
 
 ```text
 app/
@@ -261,9 +257,14 @@ src/
     navigation/
     styles/
     types/
+
+docs/
+  pantallas/
 ```
 
-## Stack tecnico
+---
+
+## ⚙️ Stack técnico
 
 - Expo SDK 54.
 - React Native 0.81.
@@ -279,7 +280,9 @@ src/
 - `expo-document-picker` para sustento de descargo.
 - `expo-splash-screen` para splash/icono.
 
-## Desarrollo local
+---
+
+## 🚀 Desarrollo local
 
 Instalar dependencias:
 
@@ -299,9 +302,11 @@ Iniciar Metro para development build:
 npm run start:dev:tunnel -- --clear
 ```
 
-En WSL2 con telefono fisico, el modo tunnel suele ser el mas estable.
+En WSL2 con teléfono físico, el modo tunnel suele ser el más estable.
 
-## Builds
+---
+
+## 📦 Builds
 
 APK con development client para seguir desarrollando:
 
@@ -315,29 +320,48 @@ APK preview para compartir:
 npx eas build --platform android --profile preview
 ```
 
-Despues de instalar un development build, los cambios JS/TS/estilos pueden verse con Metro sin generar otro APK.
+Después de instalar un development build, los cambios JS/TS/estilos pueden verse con Metro sin generar otro APK.
 
 Requieren nuevo build:
 
-- nuevas librerias nativas;
+- nuevas librerías nativas;
 - permisos;
 - plugins Expo;
 - icono;
 - splash;
-- configuracion Android/iOS.
+- configuración Android/iOS.
 
-## Privacidad y alcance
+---
 
-El prototipo usa datos ficticios. No debe usarse con datos personales reales sin consentimiento, controles de seguridad y validacion legal.
+## 🧭 Guion sugerido para el video demo
 
-La app no reemplaza canales oficiales del SAT ni constituye asesoria legal. Su objetivo es orientar, ordenar informacion y ayudar a decidir el siguiente paso.
+1. Mostrar Inicio y explicar que la app resume el trámite en acciones simples.
+2. Consultar una papeleta por placa, DNI o código.
+3. Abrir el detalle y revisar los datos principales.
+4. Entrar a Evidencia para verificar la fotopapeleta.
+5. Abrir Entender mi situación y usar la explicación por voz.
+6. Revisar Línea de tiempo para ver descuentos por fecha.
+7. Entrar a Opciones y elegir pagar con beneficio.
+8. Completar el flujo de pago con Yape.
+9. Mostrar Mis casos para continuar seguimiento.
+10. Mencionar que también existe descargo con archivos adjuntos.
 
-## Siguientes mejoras recomendadas
+---
+
+## 🔐 Privacidad y alcance
+
+El prototipo usa datos ficticios. No debe usarse con datos personales reales sin consentimiento, controles de seguridad y validación legal.
+
+SatApp no reemplaza canales oficiales del SAT ni constituye asesoría legal. Su objetivo es orientar, ordenar información y ayudar al usuario a decidir el siguiente paso.
+
+---
+
+## 🛣️ Próximas mejoras
 
 - Persistir registros manuales y preferencias.
-- Mejorar autenticacion/perfil.
+- Mejorar autenticación y perfil.
 - Conectar pagos reales solo con proveedor autorizado.
 - Agregar recordatorios locales por fecha.
-- Integrar feriados para computo de dias habiles.
+- Integrar feriados para cómputo de días hábiles.
 - Robustecer privacidad antes de usar datos reales.
-- Convertir la ayuda en onboarding/tour guiado si el alcance lo permite.
+- Convertir la ayuda en onboarding o tour guiado si el alcance lo permite.
